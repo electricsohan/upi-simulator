@@ -55,6 +55,26 @@
     <!-- Phone Screen Interior -->
     <div id="phone-screen" class="w-full h-full bg-slate-50 rounded-[40px] overflow-hidden flex flex-col relative border border-slate-200">
       
+      <!-- Native Bank SMS Push Notification Banner -->
+      <div id="sms-push-banner" class="hidden absolute top-2 inset-x-3 z-[70] bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-300 transition-all duration-500 transform -translate-y-full">
+        <div class="flex items-start gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-md mt-0.5">
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-center text-[10px] text-slate-500 mb-0.5">
+              <span class="font-bold text-slate-900 flex items-center gap-1">
+                Bank A <span class="text-[9px] font-mono font-normal text-slate-500">(VK-BANKA)</span>
+              </span>
+              <span class="text-[9px]">now</span>
+            </div>
+            <p class="text-[11px] text-slate-700 font-medium leading-tight">
+              <span class="font-mono font-bold text-slate-900 bg-orange-100 px-1 rounded text-orange-800">849201</span> is your secret OTP to set UPI PIN for A/C ••••4821. Valid for 10 mins. Do not share.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- In-App Notification Toast -->
       <div id="inapp-toast" class="hidden absolute top-12 inset-x-4 z-50 p-2.5 rounded-2xl shadow-xl backdrop-blur-md border text-xs font-semibold flex items-center gap-2.5 transition-all duration-300">
         <i id="toast-icon" data-lucide="info" class="w-4 h-4 shrink-0"></i>
@@ -120,8 +140,12 @@
         </button>
       </nav>
 
-      <!-- NPCI CL SafePad Fullscreen Overlay -->
+      <!-- ========================================================================= -->
+      <!-- NPCI CL (COMMON LIBRARY) 5-STEP PIN SET/RESET & AUTH OVERLAY              -->
+      <!-- ========================================================================= -->
       <div id="mpin-modal" class="hidden absolute inset-0 bg-[#0c2264] z-50 flex flex-col justify-between select-none font-sans">
+        
+        <!-- CL Top Header -->
         <div>
           <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-slate-200">
             <span id="cl-bank-name-header" class="text-xs font-bold text-slate-900 tracking-tight">Bank A</span>
@@ -134,62 +158,77 @@
             </div>
           </div>
 
+          <!-- CL Sub-Header Account Strip -->
           <div class="bg-[#12368c] px-4 py-2 flex items-center justify-between text-white text-xs font-medium">
             <span class="font-mono text-slate-200">*********4821</span>
             <div class="flex items-center gap-1">
-              <span id="cl-strip-amount" class="font-bold">₹1000</span>
+              <span id="cl-strip-amount" class="font-bold uppercase tracking-wider text-[11px]">SET UPI PIN</span>
               <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-300"></i>
             </div>
           </div>
         </div>
 
+        <!-- 5-Step Progress Tracker Bar (Visible for PIN Set / Reset) -->
+        <div id="cl-step-tracker" class="bg-white border-b border-slate-100 px-6 py-2 flex items-center justify-between text-[10px] font-bold">
+          <span id="cl-step-indicator" class="text-[#12368c] uppercase tracking-wider">STEP 1 OF 5</span>
+          <div class="flex items-center gap-1.5" id="cl-step-dots">
+            <span class="w-2 h-2 rounded-full bg-[#12368c]"></span>
+            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
+            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
+            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
+            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
+          </div>
+        </div>
+
+        <!-- CL Dynamic Center Canvas -->
         <div class="flex-1 bg-white flex flex-col justify-center items-center px-6">
-          <div class="flex items-center justify-center gap-6 mb-6">
-            <span class="text-[11px] font-bold tracking-wider text-[#12368c] uppercase">ENTER UPI PIN</span>
-            <button onclick="togglePinVisibility()" type="button" class="flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-[#12368c] uppercase hover:opacity-80">
+          <div class="flex items-center justify-center gap-6 mb-4">
+            <span id="cl-prompt-title" class="text-[11px] font-bold tracking-wider text-[#12368c] uppercase text-center">ENTER LAST 6 DIGITS OF DEBIT CARD</span>
+            <button id="cl-eye-btn" onclick="togglePinVisibility()" type="button" class="hidden items-center gap-1 text-[11px] font-bold tracking-wider text-[#12368c] uppercase hover:opacity-80">
               <i id="cl-eye-icon" data-lucide="eye" class="w-4 h-4 text-[#12368c]"></i>
               <span id="cl-eye-label">SHOW</span>
             </button>
           </div>
 
-          <div class="flex justify-center items-center gap-4 mb-4" id="cl-pin-dashes">
-            <div class="w-8 flex flex-col items-center"><span class="h-6 text-base font-bold text-[#12368c] leading-none mb-1 font-mono"></span><div class="w-full h-0.5 bg-slate-400"></div></div>
-            <div class="w-8 flex flex-col items-center"><span class="h-6 text-base font-bold text-[#12368c] leading-none mb-1 font-mono"></span><div class="w-full h-0.5 bg-slate-400"></div></div>
-            <div class="w-8 flex flex-col items-center"><span class="h-6 text-base font-bold text-[#12368c] leading-none mb-1 font-mono"></span><div class="w-full h-0.5 bg-slate-400"></div></div>
-            <div class="w-8 flex flex-col items-center"><span class="h-6 text-base font-bold text-[#12368c] leading-none mb-1 font-mono"></span><div class="w-full h-0.5 bg-slate-400"></div></div>
-            <div class="w-8 flex flex-col items-center"><span class="h-6 text-base font-bold text-[#12368c] leading-none mb-1 font-mono"></span><div class="w-full h-0.5 bg-slate-400"></div></div>
-            <div class="w-8 flex flex-col items-center"><span class="h-6 text-base font-bold text-[#12368c] leading-none mb-1 font-mono"></span><div class="w-full h-0.5 bg-slate-400"></div></div>
+          <!-- Step Slots Container (Underlines & Values) -->
+          <div class="flex justify-center items-center gap-3 mb-2" id="cl-slot-dashes">
+            <!-- Dynamic Slots Injected via JS -->
           </div>
 
-          <button onclick="closePinModal()" class="text-[11px] text-slate-400 hover:text-slate-600 mt-2">Cancel Transaction</button>
+          <!-- Helper Status Badge (e.g. OTP Auto-reading / Matching) -->
+          <div id="cl-sub-status" class="h-6 flex items-center justify-center mt-1"></div>
+
+          <button onclick="closePinModal()" class="text-[11px] text-slate-400 hover:text-slate-600 mt-3">Cancel</button>
         </div>
 
+        <!-- CL Numeric Keypad -->
         <div class="bg-[#f0f2f5] border-t border-slate-200">
           <div class="grid grid-cols-3 text-center text-xl font-normal text-[#12368c] py-2">
-            <button onclick="pressPinKey('1')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">1</button>
-            <button onclick="pressPinKey('2')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">2</button>
-            <button onclick="pressPinKey('3')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">3</button>
+            <button onclick="pressClKey('1')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">1</button>
+            <button onclick="pressClKey('2')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">2</button>
+            <button onclick="pressClKey('3')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">3</button>
 
-            <button onclick="pressPinKey('4')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">4</button>
-            <button onclick="pressPinKey('5')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">5</button>
-            <button onclick="pressPinKey('6')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">6</button>
+            <button onclick="pressClKey('4')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">4</button>
+            <button onclick="pressClKey('5')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">5</button>
+            <button onclick="pressClKey('6')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">6</button>
 
-            <button onclick="pressPinKey('7')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">7</button>
-            <button onclick="pressPinKey('8')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">8</button>
-            <button onclick="pressPinKey('9')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">9</button>
+            <button onclick="pressClKey('7')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">7</button>
+            <button onclick="pressClKey('8')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">8</button>
+            <button onclick="pressClKey('9')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">9</button>
 
-            <button onclick="clearLastPinDigit()" class="py-3 flex items-center justify-center hover:bg-slate-200/80 active:bg-slate-300 text-[#12368c]">
+            <button onclick="clearLastClDigit()" class="py-3 flex items-center justify-center hover:bg-slate-200/80 active:bg-slate-300 text-[#12368c]">
               <i data-lucide="delete" class="w-6 h-6 stroke-[2.2]"></i>
             </button>
-            <button onclick="pressPinKey('0')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">0</button>
+            <button onclick="pressClKey('0')" class="py-3 hover:bg-slate-200/80 active:bg-slate-300 transition">0</button>
 
             <div class="flex items-center justify-center py-2">
-              <button onclick="submitEnteredPin()" class="w-12 h-12 rounded-full bg-[#1b3a82] hover:bg-[#12285a] active:scale-95 text-white flex items-center justify-center shadow-md transition">
+              <button onclick="submitClStep()" class="w-12 h-12 rounded-full bg-[#1b3a82] hover:bg-[#12285a] active:scale-95 text-white flex items-center justify-center shadow-md transition">
                 <i data-lucide="check" class="w-6 h-6 stroke-[3]"></i>
               </button>
             </div>
           </div>
 
+          <!-- Footer Powered by UPI -->
           <div class="bg-white py-2 flex flex-col items-center justify-center border-t border-slate-200">
             <span class="text-[8px] tracking-widest text-slate-400 uppercase font-semibold">POWERED BY</span>
             <div class="flex items-center gap-0.5 mt-0.5">
@@ -201,6 +240,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
     </div>
@@ -222,7 +262,7 @@
             <h2 class="text-lg font-black text-white tracking-wide uppercase">Core Backend Flow Engine</h2>
             <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">UPI Switch Protocol</span>
           </div>
-          <p class="text-xs text-slate-400">Mathematically aligned SVG architecture with isolated individual step tracing</p>
+          <p class="text-xs text-slate-400">Contextual topology — Only relevant blocks & clean numbered request/response arrows are rendered</p>
         </div>
       </div>
 
@@ -260,7 +300,7 @@
               STEP: 0 / 20
             </span>
             <div id="fs-step-title" class="text-xs font-bold text-white max-w-md truncate">
-              Ready to trace step-by-step payment flow.
+              Ready to trace step-by-step flow.
             </div>
           </div>
 
@@ -284,7 +324,7 @@
           </div>
         </div>
 
-        <!-- 100% Mathematically Aligned Canvas: Pure SVG Elements & Wires -->
+        <!-- Symmetrical SVG Blueprint with Flow-Adaptive Arrows and Blocks -->
         <div class="flex-1 relative min-h-0 flex items-center justify-center">
           
           <svg class="w-full h-full" viewBox="0 0 1100 620">
@@ -296,7 +336,7 @@
                 <path d="M 0 1 L 10 5 L 0 9 z" fill="#f97316" />
               </marker>
 
-              <!-- Radial Ambient Glow Filters for Major Blocks -->
+              <!-- Radial Glow Filters -->
               <filter id="glow-orange" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#f97316" flood-opacity="0.6"/>
               </filter>
@@ -311,96 +351,10 @@
               </filter>
             </defs>
 
-            <!-- ================= NUMBERED REQUEST & RESPONSE ARROWS ================= -->
-            
-            <!-- 1. Payer APP <-> Common Library -->
-            <!-- Wire #1: Payer APP -> Common Library (Upward Req) -->
-            <path id="wire-1" d="M 75, 280 L 75, 140" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-1" x="42" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#1 [Req]</text>
-
-            <!-- Wire #2: Common Library -> Payer APP (Downward Resp) -->
-            <path id="wire-2" d="M 105, 140 L 105, 280" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-2" x="115" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#2 [Resp]</text>
-
-            <!-- 2. Payer APP <-> Payer PSP -->
-            <!-- Wire #3: Payer APP -> Payer PSP (Rightward Req) -->
-            <path id="wire-3" d="M 155, 300 L 220, 300" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-3" x="175" y="292" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#3</text>
-
-            <!-- Wire #18: Payer PSP -> Payer APP (Leftward Resp) -->
-            <path id="wire-18" d="M 220, 320 L 155, 320" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-18" x="172" y="335" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#18</text>
-
-            <!-- 3. Payer PSP <-> Central Switch -->
-            <!-- Wire #4: Payer PSP -> Central Switch (Rightward Req) -->
-            <path id="wire-4" d="M 360, 300 L 470, 300" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-4" x="402" y="292" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#4</text>
-
-            <!-- Wire #17: Central Switch -> Payer PSP (Leftward Resp) -->
-            <path id="wire-17" d="M 470, 320 L 360, 320" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-17" x="402" y="335" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#17</text>
-
-            <!-- 4. Central Switch <-> Payee PSP -->
-            <!-- Wire #5: Central Switch -> Payee PSP (Rightward Req) -->
-            <path id="wire-5" d="M 630, 295 L 740, 295" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-5" x="675" y="287" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#5</text>
-
-            <!-- Wire #6: Payee PSP -> Central Switch (Leftward Resp) -->
-            <path id="wire-6" d="M 740, 315 L 630, 315" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-6" x="675" y="330" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#6</text>
-
-            <!-- Wire #19: Central Switch -> Payee PSP (ReqTxnConfirmation) -->
-            <path id="wire-19" d="M 630, 335 L 740, 335" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-19" x="675" y="350" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#19</text>
-
-            <!-- 5. Central Switch <-> Payer's Bank -->
-            <!-- Wire #7: Central Switch -> Payer's Bank (Upward Req) -->
-            <path id="wire-7" d="M 535, 275 L 535, 145" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-7" x="495" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#7 [Req]</text>
-
-            <!-- Wire #12: Payer's Bank -> Central Switch (Downward Resp) -->
-            <path id="wire-12" d="M 565, 145 L 565, 275" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-12" x="575" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#12 [Resp]</text>
-
-            <!-- 6. Payer's Bank <-> Payer Bank's HSM -->
-            <!-- Wire #8: Payer's Bank -> Payer Bank's HSM (Leftward Req) -->
-            <path id="wire-8" d="M 475, 98 L 365, 98" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-8" x="410" y="90" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#8</text>
-
-            <!-- Wire #9: Payer Bank's HSM -> Payer's Bank (Rightward Resp) -->
-            <path id="wire-9" d="M 365, 122 L 475, 122" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-9" x="410" y="137" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#9</text>
-
-            <!-- 7. Payer's Bank <-> Payer Bank's CBS -->
-            <!-- Wire #10: Payer's Bank -> Payer Bank's CBS (Rightward Req) -->
-            <path id="wire-10" d="M 625, 98 L 735, 98" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-10" x="670" y="90" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#10</text>
-
-            <!-- Wire #11: Payer Bank's CBS -> Payer's Bank (Leftward Resp) -->
-            <path id="wire-11" d="M 735, 122 L 625, 122" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-11" x="670" y="137" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#11</text>
-
-            <!-- 8. Central Switch <-> Payee's Bank -->
-            <!-- Wire #13: Central Switch -> Payee's Bank (Downward Req) -->
-            <path id="wire-13" d="M 535, 345 L 535, 475" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-13" x="490" y="410" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#13 [Req]</text>
-
-            <!-- Wire #16: Payee's Bank -> Central Switch (Upward Resp) -->
-            <path id="wire-16" d="M 565, 475 L 565, 345" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-16" x="575" y="410" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#16 [Resp]</text>
-
-            <!-- 9. Payee's Bank <-> Payee Bank's CBS -->
-            <!-- Wire #14: Payee's Bank -> Payee Bank's CBS (Rightward Req) -->
-            <path id="wire-14" d="M 625, 498 L 735, 498" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-14" x="670" y="490" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#14</text>
-
-            <!-- Wire #15: Payee Bank's CBS -> Payee's Bank (Leftward Resp) -->
-            <path id="wire-15" d="M 735, 522 L 625, 522" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
-            <text id="label-wire-15" x="670" y="537" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#15</text>
+            <!-- Dynamic SVG Wires Group -->
+            <g id="svg-wires-group"></g>
 
             <!-- ================= ENTITY BLOCKS (STRICT NAMES ONLY) ================= -->
-            
-            <!-- 5 MAJOR BLOCKS (STAND OUT) -->
             <!-- MAJOR 1: Central Switch (Center: 550, 310) -->
             <g id="block-central-switch" class="transition-all duration-300 cursor-pointer">
               <rect x="470" y="275" width="160" height="70" rx="20" fill="#1e1b4b" stroke="#f97316" stroke-width="4" filter="url(#glow-orange)" />
@@ -431,7 +385,6 @@
               <text x="550" y="516" fill="#e9d5ff" font-size="13" font-family="sans-serif" font-weight="900" text-anchor="middle">Payee's Bank</text>
             </g>
 
-            <!-- PERIPHERAL HELPER BLOCKS -->
             <!-- Common Library (Top Left: 90, 110) -->
             <g id="block-cl" class="transition-all duration-300 cursor-pointer">
               <rect x="20" y="80" width="140" height="60" rx="14" fill="#0c2264" stroke="#6366f1" stroke-width="2" />
@@ -479,7 +432,7 @@
             <span id="fs-step-indicator" class="text-orange-400 font-mono font-bold">STEP 0 / 20</span>
           </div>
           <div id="fs-step-desc" class="p-3.5 bg-slate-900 border border-slate-800 rounded-2xl text-xs text-slate-200 leading-relaxed min-h-[95px] shadow-inner">
-            Click <b>Next</b> or <b>Simulate (3s / step)</b> to step through the payment sequence. Each step isolates its protocol leg and API call.
+            Click <b>Next</b> or <b>Simulate (3s / step)</b> to step through the flow.
           </div>
         </div>
 
@@ -493,7 +446,6 @@
             <span id="fs-api-badge" class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono text-[10px]">AWAITING_STEP</span>
           </div>
 
-          <!-- API Details Card Container -->
           <div id="fs-api-container" class="flex-1 p-3.5 bg-slate-950 border border-slate-800 rounded-2xl overflow-y-auto space-y-2.5 font-mono text-xs shadow-inner">
             <div class="text-slate-500 italic text-center py-6">Select a step to inspect the exact API or Common Library method invoked.</div>
           </div>
@@ -512,7 +464,7 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 3. STATE ENGINE & PROTOCOL ORCHESTRATION                                 -->
+  <!-- 3. UNIFIED JAVASCRIPT APP & SIMULATION ENGINE                             -->
   <!-- ========================================================================= -->
   <script>
     const DEFAULT_STATE = {
@@ -548,14 +500,26 @@
       ]
     };
 
-    let appState = JSON.parse(localStorage.getItem('FASTPAY_PLUS_FULL_SYSTEM_STATE')) || DEFAULT_STATE;
+    let appState;
+    try {
+      const stored = localStorage.getItem('FASTPAY_PLUS_V6_STATE');
+      appState = stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_STATE));
+    } catch (e) {
+      appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
 
     function saveState() {
-      localStorage.setItem('FASTPAY_PLUS_FULL_SYSTEM_STATE', JSON.stringify(appState));
+      try {
+        localStorage.setItem('FASTPAY_PLUS_V6_STATE', JSON.stringify(appState));
+      } catch (e) {
+        console.warn('LocalStorage error', e);
+      }
     }
 
     function resetDemoSession() {
-      localStorage.removeItem('FASTPAY_PLUS_FULL_SYSTEM_STATE');
+      try {
+        localStorage.removeItem('FASTPAY_PLUS_V6_STATE');
+      } catch (e) {}
       appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
       saveState();
       currentView = 'register-user';
@@ -563,29 +527,36 @@
       showInAppToast('Session state reset to default.', 'info');
     }
 
-    let currentView = appState.isUserRegistered ? 'home' : 'register-user';
+    let currentView = (appState && appState.isUserRegistered) ? 'home' : 'register-user';
     let previousAppView = 'home';
     let pendingPinAction = null;
     let enteredPinBuffer = '';
     let isPinVisible = false;
-    let chosenSimSlot = 'SIM 1';
+    let chosenSimSlot = (appState && appState.selectedSim) ? appState.selectedSim : 'SIM 1';
     let toastTimeout = null;
 
-    // Simulation Engine Variables
+    // Set PIN 5-Step CL State Variables
+    let clMode = 'auth'; // 'auth' | 'set-pin'
+    let clSetPinStep = 1; // 1: Card Last 6 | 2: Expiry MMYY | 3: OTP Auto-fetch | 4: Enter PIN | 5: Confirm PIN
+    let cardLast6Val = '512948';
+    let cardExpiryVal = '0928';
+    let otpVal = '';
+    let newPinVal = '';
+
     let currentFlowType = 'pay';
     let currentStepIndex = 0;
     let autoSimTimer = null;
     let isAutoSimulating = false;
 
     function formatINR(val) {
-      return Number(val).toLocaleString('en-IN', {
+      return Number(val || 0).toLocaleString('en-IN', {
         maximumFractionDigits: 2,
         minimumFractionDigits: 2
       });
     }
 
     // =========================================================================
-    // EXACT UNCLUBBED PAY FLOW DEFINITIONS: STEPS 1 TO 20 (ARROWS #1 TO #19)
+    // FLOW 1: PAY FLOW STEPS (ALL 10 BLOCKS RELEVANT)
     // =========================================================================
     const PAY_FLOW_STEPS = [
       {
@@ -594,254 +565,535 @@
         desc: "Payer enters Payee VPA (or scans dynamic QR). Payer is shown the verified Payee Name and is prompted to select their linked UPI bank account for payment.",
         activeBlocks: ['block-payer-app'],
         activeWires: [],
-        apiInfo: {
-          methodName: "UI Client Event (Pre-Auth Intent)",
-          category: "Mobile Client",
-          details: "Payer inputs merchant/payee identifier. App prompts for source account verification before initiating PIN capture."
-        }
+        apiInfo: { methodName: "UI Client Event (Pre-Auth Intent)", category: "Mobile Client", details: "Payer inputs merchant/payee identifier. App prompts for source account verification before initiating PIN capture." }
       },
       {
         stepNum: 2,
         title: "Payer APP -> Common Library [Launch SafePad]",
         desc: "<b>Arrow #1 [Req]:</b> Payer is redirected to Common Library page to enter UPI PIN. Payer APP invokes the isolated Common Library container.",
         activeBlocks: ['block-payer-app', 'block-cl'],
-        activeWires: ['wire-1'],
-        apiInfo: {
-          methodName: "getCredential()",
-          category: "Common Library (CL)",
-          details: "Payer APP calls Common Library method getCredential() with bank challenge token to safely capture the UPI PIN."
-        }
+        activeWires: ['wire-pay-1'],
+        apiInfo: { methodName: "getCredential()", category: "Common Library (CL)", details: "Payer APP calls Common Library method getCredential() with bank challenge token to safely capture the UPI PIN." }
       },
       {
         stepNum: 3,
         title: "Common Library -> Payer APP [Encrypted PIN Token]",
         desc: "<b>Arrow #2 [Resp]:</b> Common Library captures the 6-digit PIN in hardware-isolated sandbox, encrypts it with the Bank's Public Key, and returns the encrypted PIN block to Payer APP.",
         activeBlocks: ['block-cl', 'block-payer-app'],
-        activeWires: ['wire-2'],
-        apiInfo: {
-          methodName: "getCredential() [Response]",
-          category: "Common Library (CL)",
-          details: "Returns Base64-encoded encrypted PIN block (RSA/PKCS1). Cleartext PIN is strictly wiped from memory."
-        }
+        activeWires: ['wire-pay-2'],
+        apiInfo: { methodName: "getCredential() [Response]", category: "Common Library (CL)", details: "Returns Base64-encoded encrypted PIN block (RSA/PKCS1). Cleartext PIN is strictly wiped from memory." }
       },
       {
         stepNum: 4,
         title: "Payer APP -> Payer PSP [Dispatch Payment]",
         desc: "<b>Arrow #3 [Req]:</b> Payer APP sends a payment authorization request containing Payer VPA, Payee VPA, Payer Account, and Encrypted PIN to Payer PSP.",
         activeBlocks: ['block-payer-app', 'block-payer-psp'],
-        activeWires: ['wire-3'],
-        apiInfo: {
-          methodName: "ReqPay Type=PAY",
-          category: "UPI Protocol",
-          details: "Payer APP initiates payment payload with Payer VPA, Payee VPA, and encrypted credential token."
-        }
+        activeWires: ['wire-pay-3'],
+        apiInfo: { methodName: "ReqPay Type=PAY", category: "UPI Protocol", details: "Payer APP initiates payment payload with Payer VPA, Payee VPA, and encrypted credential token." }
       },
       {
         stepNum: 5,
         title: "Payer PSP -> Central Switch [Forward Pay Request]",
         desc: "<b>Arrow #4 [Req]:</b> Payer PSP redirects the payment request to Central Switch with Payer VPA, Payee VPA, Payer Account, and Payer Bank Identifier Code (BIC).",
         activeBlocks: ['block-payer-psp', 'block-central-switch'],
-        activeWires: ['wire-4'],
-        apiInfo: {
-          methodName: "ReqPay Type=PAY",
-          category: "UPI Protocol",
-          details: "Payer PSP routes ReqPay Type=PAY to Central Switch carrying Payer VPA, Payee VPA, Account No, and Payer BIC (BKNA000101)."
-        }
+        activeWires: ['wire-pay-4'],
+        apiInfo: { methodName: "ReqPay Type=PAY", category: "UPI Protocol", details: "Payer PSP routes ReqPay Type=PAY to Central Switch carrying Payer VPA, Payee VPA, Account No, and Payer BIC (BKNA000101)." }
       },
       {
         stepNum: 6,
         title: "Central Switch -> Payee PSP [Resolve Payee Handle]",
         desc: "<b>Arrow #5 [Req]:</b> Central Switch redirects the validation request to Payee PSP based on the Payee VPA handle domain.",
         activeBlocks: ['block-central-switch', 'block-payee-psp'],
-        activeWires: ['wire-5'],
-        apiInfo: {
-          methodName: "ReqAuthDetails Type=PAY",
-          category: "UPI Protocol",
-          details: "Central Switch queries Payee PSP to validate beneficiary handle and fetch resolved banking parameters."
-        }
+        activeWires: ['wire-pay-5'],
+        apiInfo: { methodName: "ReqAuthDetails Type=PAY", category: "UPI Protocol", details: "Central Switch queries Payee PSP to validate beneficiary handle and fetch resolved banking parameters." }
       },
       {
         stepNum: 7,
         title: "Payee PSP -> Central Switch [Validate VPA & Resolve BIC]",
         desc: "<b>Arrow #6 [Resp]:</b> Payee PSP validates the Payee VPA and resolves the Beneficiary Account number and Bank Identifier Code (BIC).",
         activeBlocks: ['block-payee-psp', 'block-central-switch'],
-        activeWires: ['wire-6'],
-        apiInfo: {
-          methodName: "RespAuthDetails Type=PAY",
-          category: "UPI Protocol",
-          details: "Payee PSP responds with validation status, Payee Account Number, and Payee BIC (BKNB000202)."
-        }
+        activeWires: ['wire-pay-6'],
+        apiInfo: { methodName: "RespAuthDetails Type=PAY", category: "UPI Protocol", details: "Payee PSP responds with validation status, Payee Account Number, and Payee BIC (BKNB000202)." }
       },
       {
         stepNum: 8,
         title: "Central Switch -> Payer's Bank [Route Debit Request]",
         desc: "<b>Arrow #7 [Req]:</b> Central Switch routes the Debit request to Payer's Bank based on Payer's BIC.",
         activeBlocks: ['block-central-switch', 'block-payer-bank'],
-        activeWires: ['wire-7'],
-        apiInfo: {
-          methodName: "ReqPay Type=DEBIT",
-          category: "UPI Protocol",
-          details: "Central Switch instructs Remitter Bank (BIC: BKNA000101) to debit the customer account with encrypted PIN attached."
-        }
+        activeWires: ['wire-pay-7'],
+        apiInfo: { methodName: "ReqPay Type=DEBIT", category: "UPI Protocol", details: "Central Switch instructs Remitter Bank (BIC: BKNA000101) to debit the customer account with encrypted PIN attached." }
       },
       {
         stepNum: 9,
         title: "Payer's Bank -> Payer Bank's HSM [Forward PIN Block]",
         desc: "<b>Arrow #8 [Req]:</b> Payer's Bank forwards the encrypted PIN block to its Hardware Security Module (HSM) for hardware-isolated cryptographic verification.",
         activeBlocks: ['block-payer-bank', 'block-payer-hsm'],
-        activeWires: ['wire-8'],
-        apiInfo: {
-          methodName: "Bank's internal APIs (out of UPI purview)",
-          category: "Internal Bank HSM",
-          details: "Bank Switch dispatches authentication command to HSM hardware vault to verify customer MPIN."
-        }
+        activeWires: ['wire-pay-8'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank HSM", details: "Bank Switch dispatches authentication command to HSM hardware vault to verify customer MPIN." }
       },
       {
         stepNum: 10,
         title: "Payer Bank's HSM -> Payer's Bank [PIN Verification Response]",
         desc: "<b>Arrow #9 [Resp]:</b> Payer Bank's HSM validates the PIN against stored secure keys and returns authentication success to Payer's Bank.",
         activeBlocks: ['block-payer-hsm', 'block-payer-bank'],
-        activeWires: ['wire-9'],
-        apiInfo: {
-          methodName: "Bank's internal APIs (out of UPI purview)",
-          category: "Internal Bank HSM",
-          details: "HSM confirms PIN integrity and returns verified authorization signature to Bank Switch."
-        }
+        activeWires: ['wire-pay-9'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank HSM", details: "HSM confirms PIN integrity and returns verified authorization signature to Bank Switch." }
       },
       {
         stepNum: 11,
         title: "Payer's Bank -> Payer Bank's CBS [Execute Account Debit]",
         desc: "<b>Arrow #10 [Req]:</b> Upon successful PIN validation, Payer's Bank calls its Core Banking System (CBS) to validate account balance and debit Payer's account.",
         activeBlocks: ['block-payer-bank', 'block-payer-cbs'],
-        activeWires: ['wire-10'],
-        apiInfo: {
-          methodName: "Bank's internal APIs (out of UPI purview)",
-          category: "Internal Bank CBS",
-          details: "Internal Core Banking balance check and transaction ledger debit execution request."
-        }
+        activeWires: ['wire-pay-10'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "Internal Core Banking balance check and transaction ledger debit execution request." }
       },
       {
         stepNum: 12,
         title: "Payer Bank's CBS -> Payer's Bank [Debit Success Response]",
         desc: "<b>Arrow #11 [Resp]:</b> Payer Bank's CBS validates funds, completes ledger debit, updates available balance, and confirms success to Payer's Bank.",
         activeBlocks: ['block-payer-cbs', 'block-payer-bank'],
-        activeWires: ['wire-11'],
-        apiInfo: {
-          methodName: "Bank's internal APIs (out of UPI purview)",
-          category: "Internal Bank CBS",
-          details: "CBS posts debit entry, logs transaction reference, and returns success confirmation."
-        }
+        activeWires: ['wire-pay-11'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "CBS posts debit entry, logs transaction reference, and returns success confirmation." }
       },
       {
         stepNum: 13,
         title: "Payer's Bank -> Central Switch [Debit Response]",
         desc: "<b>Arrow #12 [Resp]:</b> Payer's Bank responds to Central Switch confirming successful account debit.",
         activeBlocks: ['block-payer-bank', 'block-central-switch'],
-        activeWires: ['wire-12'],
-        apiInfo: {
-          methodName: "RespPay Type=DEBIT",
-          category: "UPI Protocol",
-          details: "Payer's Bank transmits successful debit confirmation and Remitter RRN back to Central Switch."
-        }
+        activeWires: ['wire-pay-12'],
+        apiInfo: { methodName: "RespPay Type=DEBIT", category: "UPI Protocol", details: "Payer's Bank transmits successful debit confirmation and Remitter RRN back to Central Switch." }
       },
       {
         stepNum: 14,
         title: "Central Switch -> Payee's Bank [Route Credit Request]",
         desc: "<b>Arrow #13 [Req]:</b> Upon getting response from Payer's Bank, Central Switch forwards Credit request to Payee's Bank based on Payee's BIC.",
         activeBlocks: ['block-central-switch', 'block-payee-bank'],
-        activeWires: ['wire-13'],
-        apiInfo: {
-          methodName: "ReqPay Type=CREDIT",
-          category: "UPI Protocol",
-          details: "Central Switch directs credit instruction to Beneficiary Bank (BIC: BKNB000202) for real-time deposit."
-        }
+        activeWires: ['wire-pay-13'],
+        apiInfo: { methodName: "ReqPay Type=CREDIT", category: "UPI Protocol", details: "Central Switch directs credit instruction to Beneficiary Bank (BIC: BKNB000202) for real-time deposit." }
       },
       {
         stepNum: 15,
         title: "Payee's Bank -> Payee Bank's CBS [Post Credit Request]",
         desc: "<b>Arrow #14 [Req]:</b> Payee's Bank invokes its Core Banking System (CBS) to credit the beneficiary customer's account.",
         activeBlocks: ['block-payee-bank', 'block-payee-cbs'],
-        activeWires: ['wire-14'],
-        apiInfo: {
-          methodName: "Bank's internal APIs (out of UPI purview)",
-          category: "Internal Bank CBS",
-          details: "Beneficiary bank internal API call directing CBS to credit funds to beneficiary account."
-        }
+        activeWires: ['wire-pay-14'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "Beneficiary bank internal API call directing CBS to credit funds to beneficiary account." }
       },
       {
         stepNum: 16,
         title: "Payee Bank's CBS -> Payee's Bank [Credit Success Response]",
         desc: "<b>Arrow #15 [Resp]:</b> Payee Bank's CBS posts the credit entry and responds back with confirmation to Payee's Bank.",
         activeBlocks: ['block-payee-cbs', 'block-payee-bank'],
-        activeWires: ['wire-15'],
-        apiInfo: {
-          methodName: "Bank's internal APIs (out of UPI purview)",
-          category: "Internal Bank CBS",
-          details: "CBS confirms credit posted with final ledger balance and transaction record."
-        }
+        activeWires: ['wire-pay-15'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "CBS confirms credit posted with final ledger balance and transaction record." }
       },
       {
         stepNum: 17,
         title: "Payee's Bank -> Central Switch [Credit Response]",
         desc: "<b>Arrow #16 [Resp]:</b> Payee's Bank responds back to Central Switch confirming successful credit posting.",
         activeBlocks: ['block-payee-bank', 'block-central-switch'],
-        activeWires: ['wire-16'],
-        apiInfo: {
-          methodName: "RespPay Type=CREDIT",
-          category: "UPI Protocol",
-          details: "Payee's Bank dispatches RespPay Type=CREDIT confirming real-time irrevocable settlement."
-        }
+        activeWires: ['wire-pay-16'],
+        apiInfo: { methodName: "RespPay Type=CREDIT", category: "UPI Protocol", details: "Payee's Bank dispatches RespPay Type=CREDIT confirming real-time irrevocable settlement." }
       },
       {
         stepNum: 18,
         title: "Central Switch -> Payer PSP [Pay Response]",
         desc: "<b>Arrow #17 [Resp]:</b> Central Switch sends the successful payment clearing confirmation to Payer PSP.",
         activeBlocks: ['block-central-switch', 'block-payer-psp'],
-        activeWires: ['wire-17'],
-        apiInfo: {
-          methodName: "RespPay Type=PAY",
-          category: "UPI Protocol",
-          details: "Central Switch returns successful transaction status and Switch RRN to Payer PSP."
-        }
+        activeWires: ['wire-pay-17'],
+        apiInfo: { methodName: "RespPay Type=PAY", category: "UPI Protocol", details: "Central Switch returns successful transaction status and Switch RRN to Payer PSP." }
       },
       {
         stepNum: 19,
         title: "Payer PSP -> Payer APP [Render Success]",
         desc: "<b>Arrow #18 [Resp]:</b> Payer PSP forwards the success status to Payer APP to render the payment receipt.",
         activeBlocks: ['block-payer-psp', 'block-payer-app'],
-        activeWires: ['wire-18'],
-        apiInfo: {
-          methodName: "RespPay Type=PAY",
-          category: "UPI Protocol",
-          details: "Payer APP receives success acknowledgment and displays the transaction receipt on the user screen."
-        }
+        activeWires: ['wire-pay-18'],
+        apiInfo: { methodName: "RespPay Type=PAY", category: "UPI Protocol", details: "Payer APP receives success acknowledgment and displays the transaction receipt on the user screen." }
       },
       {
         stepNum: 20,
         title: "Central Switch -> Payee PSP [Transaction Confirmation]",
         desc: "<b>Arrow #19 [Req]:</b> Central Switch sends a transaction confirmation request to Payee PSP for final merchant/payee notification.",
         activeBlocks: ['block-central-switch', 'block-payee-psp'],
-        activeWires: ['wire-19'],
-        apiInfo: {
-          methodName: "ReqTxnConfirmation",
-          category: "UPI Protocol",
-          details: "Central Switch dispatches confirmation callback notifying Payee PSP of settled funds."
-        }
+        activeWires: ['wire-pay-19'],
+        apiInfo: { methodName: "ReqTxnConfirmation", category: "UPI Protocol", details: "Central Switch dispatches confirmation callback notifying Payee PSP of settled funds." }
       }
     ];
+
+    // =========================================================================
+    // FLOW 2: PIN SET FLOW STEPS (PAYEE BLOCKS HIDDEN)
+    // =========================================================================
+    const PIN_SET_FLOW_STEPS = [
+      {
+        stepNum: 1,
+        title: "Payer Selects Bank Account for PIN Setup",
+        desc: "Payer selects the bank account (Bank A - <code>•••• 4821</code>) that must be configured with a new UPI PIN.",
+        activeBlocks: ['block-payer-app'],
+        activeWires: [],
+        apiInfo: { methodName: "UI Client Event (Account Selection)", category: "Mobile Client", details: "Payer identifies the target linked account on FastPay+ to initiate credential registration." }
+      },
+      {
+        stepNum: 2,
+        title: "Payer APP -> Payer PSP [Request OTP]",
+        desc: "<b>Arrow #1 [Req]:</b> Payer APP requests Payer PSP to dispatch an OTP challenge for customer card binding.",
+        activeBlocks: ['block-payer-app', 'block-payer-psp'],
+        activeWires: ['wire-psp-req'],
+        apiInfo: { methodName: "ReqOtp [Initiation]", category: "Mobile to PSP", details: "Payer APP requests OTP generation with mobile number and account token." }
+      },
+      {
+        stepNum: 3,
+        title: "Payer PSP -> Central Switch [ReqOtp]",
+        desc: "<b>Arrow #2 [Req]:</b> Payer PSP sends a <code>ReqOtp</code> request to Central Switch with mobile number and Bank Identifier Code (BIC: <code>BKNA000101</code>).",
+        activeBlocks: ['block-payer-psp', 'block-central-switch'],
+        activeWires: ['wire-switch-req'],
+        apiInfo: { methodName: "ReqOtp", category: "UPI Protocol", details: "Payer PSP invokes ReqOtp on Central Switch carrying MSISDN and Payer Bank BIC (BKNA000101)." }
+      },
+      {
+        stepNum: 4,
+        title: "Central Switch -> Payer's Bank [Forward ReqOtp]",
+        desc: "<b>Arrow #3 [Req]:</b> Central Switch forwards the <code>ReqOtp</code> request to the user's bank based on BIC.",
+        activeBlocks: ['block-central-switch', 'block-payer-bank'],
+        activeWires: ['wire-bank-req'],
+        apiInfo: { methodName: "ReqOtp", category: "UPI Protocol", details: "Central Switch routes OTP generation request directly to Payer's Bank based on BIC routing table." }
+      },
+      {
+        stepNum: 5,
+        title: "Payer's Bank Dispatches SMS OTP to Mobile",
+        desc: "Payer's Bank generates a 6-digit OTP (<code>849201</code>) and dispatches it directly to the customer's registered mobile number via Telecom SMS Gateway.",
+        activeBlocks: ['block-payer-bank'],
+        activeWires: [],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank & Telecom", details: "Bank OTP generation service issues cryptographic OTP and submits to telecom carrier SMS gateway." }
+      },
+      {
+        stepNum: 6,
+        title: "Payer's Bank -> Central Switch [RespOtp Response]",
+        desc: "<b>Arrow #4 [Resp]:</b> Payer's Bank transmits <code>RespOtp</code> back to Central Switch confirming OTP dispatch.",
+        activeBlocks: ['block-payer-bank', 'block-central-switch'],
+        activeWires: ['wire-bank-resp'],
+        apiInfo: { methodName: "RespOtp", category: "UPI Protocol", details: "Payer's Bank responds to Central Switch confirming OTP has been issued to the user's mobile number." }
+      },
+      {
+        stepNum: 7,
+        title: "Central Switch -> Payer PSP [RespOtp Forwarded]",
+        desc: "<b>Arrow #5 [Resp]:</b> Central Switch forwards <code>RespOtp</code> response back to Payer PSP.",
+        activeBlocks: ['block-central-switch', 'block-payer-psp'],
+        activeWires: ['wire-switch-resp'],
+        apiInfo: { methodName: "RespOtp", category: "UPI Protocol", details: "Central Switch delivers OTP dispatch response to Payer PSP." }
+      },
+      {
+        stepNum: 8,
+        title: "Payer PSP -> Payer APP [OTP Confirmed & SMS Received]",
+        desc: "<b>Arrow #6 [Resp]:</b> Payer PSP notifies Payer APP that OTP has been dispatched. SMS push notification appears from Bank A.",
+        activeBlocks: ['block-payer-psp', 'block-payer-app'],
+        activeWires: ['wire-psp-resp'],
+        apiInfo: { methodName: "RespOtp [Client Acknowledgment]", category: "PSP to Mobile", details: "Payer APP transitions to Common Library (CL) credential & PIN input phase." }
+      },
+      {
+        stepNum: 9,
+        title: "Common Library 5-Step PIN Setup Routine",
+        desc: "Common Library (CL) securely orchestrates the 5 steps: 1) Card last 6 digits, 2) Card Expiry MMYY, 3) Auto-fetching SMS OTP, 4) Enter PIN, 5) Confirm PIN.",
+        activeBlocks: ['block-payer-app', 'block-cl'],
+        activeWires: [],
+        apiInfo: { methodName: "getCredential()", category: "Common Library (CL)", details: "CL isolated sandbox captures Card Last 6, MMYY expiry, auto-reads OTP, and captures/confirms customer MPIN." }
+      },
+      {
+        stepNum: 10,
+        title: "Common Library -> Payer APP [Encrypted Credentials Block]",
+        desc: "<b>Arrow #7 [Resp]:</b> Common Library returns an encrypted credentials block to Payer APP. Cleartext PIN and OTP never touch app memory.",
+        activeBlocks: ['block-cl', 'block-payer-app'],
+        activeWires: ['wire-cl-resp'],
+        apiInfo: { methodName: "getCredential() [Callback / Return]", category: "Common Library (CL)", details: "CL outputs encrypted CredBlock containing Card hash, Expiry, OTP, and new MPIN block." }
+      },
+      {
+        stepNum: 11,
+        title: "Payer APP -> Payer PSP [Send Registration Request]",
+        desc: "<b>Arrow #8 [Req]:</b> Payer APP sends the set PIN request payload with encrypted credentials to Payer PSP.",
+        activeBlocks: ['block-payer-app', 'block-payer-psp'],
+        activeWires: ['wire-psp-req'],
+        apiInfo: { methodName: "ReqRegMob [Initiate]", category: "Mobile to PSP", details: "Payer APP transmits registration intent with encrypted credential block to Payer PSP." }
+      },
+      {
+        stepNum: 12,
+        title: "Payer PSP -> Central Switch [ReqRegMob API]",
+        desc: "<b>Arrow #9 [Req]:</b> Payer PSP sends <code>ReqRegMob</code> API to Central Switch with encrypted credential payload.",
+        activeBlocks: ['block-payer-psp', 'block-central-switch'],
+        activeWires: ['wire-switch-req'],
+        apiInfo: { methodName: "ReqRegMob", category: "UPI Protocol", details: "Payer PSP invokes ReqRegMob carrying encrypted credential block to Central Switch." }
+      },
+      {
+        stepNum: 13,
+        title: "Central Switch -> Payer's Bank [Forward ReqRegMob]",
+        desc: "<b>Arrow #10 [Req]:</b> Central Switch forwards the <code>ReqRegMob</code> request to the user's bank based on BIC.",
+        activeBlocks: ['block-central-switch', 'block-payer-bank'],
+        activeWires: ['wire-bank-req'],
+        apiInfo: { methodName: "ReqRegMob", category: "UPI Protocol", details: "Central Switch forwards mobile registration and PIN provisioning request to Payer's Bank." }
+      },
+      {
+        stepNum: 14,
+        title: "Payer's Bank <-> CBS & HSM [Verify OTP, Card & Set PIN]",
+        desc: "<b>Arrows #11, #12, #13 & #14:</b> User's bank verifies OTP & Card details against CBS, and provisions the new UPI PIN hash in its HSM.",
+        activeBlocks: ['block-payer-bank', 'block-payer-hsm', 'block-payer-cbs'],
+        activeWires: ['wire-hsm-req', 'wire-hsm-resp', 'wire-cbs-req', 'wire-cbs-resp'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS & HSM", details: "Bank CBS validates Card last 6 digits, Expiry, and OTP; HSM securely provisions and stores new customer MPIN hash." }
+      },
+      {
+        stepNum: 15,
+        title: "Payer's Bank -> Central Switch [RespRegMob Success]",
+        desc: "<b>Arrow #15 [Resp]:</b> User's bank responds to Central Switch with <code>RespRegMob</code> confirming successful PIN setup.",
+        activeBlocks: ['block-payer-bank', 'block-central-switch'],
+        activeWires: ['wire-bank-resp'],
+        apiInfo: { methodName: "RespRegMob", category: "UPI Protocol", details: "Payer's Bank delivers RespRegMob confirming customer MPIN has been active in bank HSM." }
+      },
+      {
+        stepNum: 16,
+        title: "Central Switch -> Payer PSP [RespRegMob Forwarded]",
+        desc: "<b>Arrow #16 [Resp]:</b> Central Switch forwards <code>RespRegMob</code> confirmation to Payer PSP.",
+        activeBlocks: ['block-central-switch', 'block-payer-psp'],
+        activeWires: ['wire-switch-resp'],
+        apiInfo: { methodName: "RespRegMob", category: "UPI Protocol", details: "Central Switch routes registration success confirmation back to Payer PSP." }
+      },
+      {
+        stepNum: 17,
+        title: "Payer PSP -> Payer APP [PIN Setup Complete]",
+        desc: "<b>Arrow #17 [Resp]:</b> Payer PSP notifies Payer APP. User screen displays confirmation that UPI PIN is successfully registered.",
+        activeBlocks: ['block-payer-psp', 'block-payer-app'],
+        activeWires: ['wire-psp-resp'],
+        apiInfo: { methodName: "RespRegMob [Client Finality]", category: "PSP to Mobile", details: "FastPay+ App presents confirmation that the account is ready for instant transactions." }
+      }
+    ];
+
+    // =========================================================================
+    // FLOW 3: BALANCE ENQUIRY FLOW STEPS (PAYEE BLOCKS HIDDEN)
+    // =========================================================================
+    const BALANCE_FLOW_STEPS = [
+      {
+        stepNum: 1,
+        title: "Payer Selects Account on App",
+        desc: "Payer on FastPay+ App selects the account for which the balance is to be checked.",
+        activeBlocks: ['block-payer-app'],
+        activeWires: [],
+        apiInfo: { methodName: "UI Client Event (Account Selection)", category: "Mobile Client", details: "Payer taps Check Balance on linked Bank A account." }
+      },
+      {
+        stepNum: 2,
+        title: "Payer to Enter UPI PIN in CL Interface",
+        desc: "<b>Arrow #1 [Req]:</b> Payer APP redirects to Common Library (CL) interface. Payer enters UPI PIN securely into CL.",
+        activeBlocks: ['block-payer-app', 'block-cl'],
+        activeWires: ['wire-cl-req'],
+        apiInfo: { methodName: "getCredential()", category: "Common Library (CL)", details: "Payer APP executes getCredential() to capture UPI PIN in isolated sandbox." }
+      },
+      {
+        stepNum: 3,
+        title: "CL Returns Encrypted Credentials to Payer APP",
+        desc: "<b>Arrow #2 [Resp]:</b> Common Library encrypts PIN block using Bank A Public Key and returns encrypted credentials to Payer APP.",
+        activeBlocks: ['block-cl', 'block-payer-app'],
+        activeWires: ['wire-cl-resp'],
+        apiInfo: { methodName: "getCredential() [Response]", category: "Common Library (CL)", details: "Encrypted MPIN block returned. Cleartext PIN is wiped." }
+      },
+      {
+        stepNum: 4,
+        title: "Balance Enquiry Request Sent to Payer PSP",
+        desc: "<b>Arrow #3 [Req]:</b> Balance enquiry request sent to Payer PSP with encrypted credentials.",
+        activeBlocks: ['block-payer-app', 'block-payer-psp'],
+        activeWires: ['wire-psp-req'],
+        apiInfo: { methodName: "ReqBalEnq [Initiation]", category: "Mobile to PSP", details: "Payer APP sends balance query with encrypted PIN block to Payer PSP." }
+      },
+      {
+        stepNum: 5,
+        title: "Payer PSP Sends ReqBalEnq to Central Switch",
+        desc: "<b>Arrow #4 [Req]:</b> Payer PSP sends <code>ReqBalEnq</code> request to Central Switch along with account number, BIC, and encrypted credentials.",
+        activeBlocks: ['block-payer-psp', 'block-central-switch'],
+        activeWires: ['wire-switch-req'],
+        apiInfo: { methodName: "ReqBalEnq", category: "UPI Protocol", details: "Payer PSP transmits ReqBalEnq to Central Switch with Account Number, BIC (BKNA000101), and encrypted credentials." }
+      },
+      {
+        stepNum: 6,
+        title: "Central Switch Forwards Request to User's Bank",
+        desc: "<b>Arrow #5 [Req]:</b> Central Switch forwards the <code>ReqBalEnq</code> request to user's bank based on BIC.",
+        activeBlocks: ['block-central-switch', 'block-payer-bank'],
+        activeWires: ['wire-bank-req'],
+        apiInfo: { methodName: "ReqBalEnq", category: "UPI Protocol", details: "Central Switch routes balance inquiry directly to Payer's Bank." }
+      },
+      {
+        stepNum: 7,
+        title: "User's Bank Decodes PIN in HSM & Checks Balance in CBS",
+        desc: "<b>Arrows #6, #7, #8 & #9:</b> User's bank forwards PIN to HSM for verification, queries CBS for available account balance, and prepares response.",
+        activeBlocks: ['block-payer-bank', 'block-payer-hsm', 'block-payer-cbs'],
+        activeWires: ['wire-hsm-req', 'wire-hsm-resp', 'wire-cbs-req', 'wire-cbs-resp'],
+        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS & HSM", details: "HSM verifies PIN hash; CBS checks ledger balance and formats balance verification block." }
+      },
+      {
+        stepNum: 8,
+        title: "User's Bank -> Central Switch [RespBalEnq]",
+        desc: "<b>Arrow #10 [Resp]:</b> User's bank responds to Central Switch with <code>RespBalEnq</code> carrying encrypted balance payload.",
+        activeBlocks: ['block-payer-bank', 'block-central-switch'],
+        activeWires: ['wire-bank-resp'],
+        apiInfo: { methodName: "RespBalEnq", category: "UPI Protocol", details: "Payer's Bank dispatches RespBalEnq with balance result." }
+      },
+      {
+        stepNum: 9,
+        title: "Central Switch -> Payer PSP [RespBalEnq Forwarded]",
+        desc: "<b>Arrow #11 [Resp]:</b> Central Switch forwards <code>RespBalEnq</code> response back to Payer PSP.",
+        activeBlocks: ['block-central-switch', 'block-payer-psp'],
+        activeWires: ['wire-switch-resp'],
+        apiInfo: { methodName: "RespBalEnq", category: "UPI Protocol", details: "Central Switch delivers balance response to Payer PSP." }
+      },
+      {
+        stepNum: 10,
+        title: "Payer PSP -> Payer APP [Balance Transmitted]",
+        desc: "<b>Arrow #12 [Resp]:</b> Payer PSP forwards response to Payer APP.",
+        activeBlocks: ['block-payer-psp', 'block-payer-app'],
+        activeWires: ['wire-psp-resp'],
+        apiInfo: { methodName: "RespBalEnq [Client Delivery]", category: "PSP to Mobile", details: "Payer APP receives balance payload." }
+      },
+      {
+        stepNum: 11,
+        title: "Balance Displayed on Payer APP",
+        desc: "Verified account balance (<b>₹1,45,000.00</b>) is cleanly displayed to the user on Payer APP.",
+        activeBlocks: ['block-payer-app'],
+        activeWires: [],
+        apiInfo: { methodName: "UI Client Event (Balance Display)", category: "Mobile Client", details: "Payer APP updates screen balance value." }
+      }
+    ];
+
+    // =========================================================================
+    // DYNAMIC SVG WIRE INJECTOR (CLEAN ALIGNMENT & ACCURATE NUMBERING)
+    // =========================================================================
+    function injectSvgWires(flowType) {
+      const g = document.getElementById('svg-wires-group');
+      if (!g) return;
+
+      if (flowType === 'pay') {
+        g.innerHTML = `
+          <!-- 1. Payer APP <-> Common Library -->
+          <path id="wire-pay-1" d="M 75, 280 L 75, 140" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-1" x="42" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#1 [Req]</text>
+
+          <path id="wire-pay-2" d="M 105, 140 L 105, 280" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-2" x="115" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#2 [Resp]</text>
+
+          <!-- 2. Payer APP <-> Payer PSP -->
+          <path id="wire-pay-3" d="M 155, 300 L 220, 300" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-3" x="175" y="292" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#3</text>
+
+          <path id="wire-pay-18" d="M 220, 320 L 155, 320" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-18" x="172" y="335" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#18</text>
+
+          <!-- 3. Payer PSP <-> Central Switch -->
+          <path id="wire-pay-4" d="M 360, 300 L 470, 300" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-4" x="402" y="292" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#4</text>
+
+          <path id="wire-pay-17" d="M 470, 320 L 360, 320" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-17" x="402" y="335" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#17</text>
+
+          <!-- 4. Central Switch <-> Payee PSP -->
+          <path id="wire-pay-5" d="M 630, 295 L 740, 295" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-5" x="675" y="287" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#5</text>
+
+          <path id="wire-pay-6" d="M 740, 315 L 630, 315" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-6" x="675" y="330" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#6</text>
+
+          <path id="wire-pay-19" d="M 630, 335 L 740, 335" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-19" x="675" y="350" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#19</text>
+
+          <!-- 5. Central Switch <-> Payer's Bank -->
+          <path id="wire-pay-7" d="M 535, 275 L 535, 145" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-7" x="495" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#7 [Req]</text>
+
+          <path id="wire-pay-12" d="M 565, 145 L 565, 275" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-12" x="575" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#12 [Resp]</text>
+
+          <!-- 6. Payer's Bank <-> Payer Bank's HSM -->
+          <path id="wire-pay-8" d="M 475, 98 L 365, 98" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-8" x="410" y="90" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#8</text>
+
+          <path id="wire-pay-9" d="M 365, 122 L 475, 122" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-9" x="410" y="137" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#9</text>
+
+          <!-- 7. Payer's Bank <-> Payer Bank's CBS -->
+          <path id="wire-pay-10" d="M 625, 98 L 735, 98" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-10" x="670" y="90" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#10</text>
+
+          <path id="wire-pay-11" d="M 735, 122 L 625, 122" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-11" x="670" y="137" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#11</text>
+
+          <!-- 8. Central Switch <-> Payee's Bank -->
+          <path id="wire-pay-13" d="M 535, 345 L 535, 475" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-13" x="490" y="410" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#13 [Req]</text>
+
+          <path id="wire-pay-16" d="M 565, 475 L 565, 345" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-16" x="575" y="410" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#16 [Resp]</text>
+
+          <!-- 9. Payee's Bank <-> Payee Bank's CBS -->
+          <path id="wire-pay-14" d="M 625, 498 L 735, 498" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-14" x="670" y="490" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#14</text>
+
+          <path id="wire-pay-15" d="M 735, 522 L 625, 522" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-pay-15" x="670" y="537" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#15</text>
+        `;
+      } else {
+        // Pin Set & Balance Flows
+        g.innerHTML = `
+          <!-- Common Library <-> Payer APP -->
+          <path id="wire-cl-req" d="M 75, 280 L 75, 140" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-cl-req" x="38" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#1 [Req]</text>
+
+          <path id="wire-cl-resp" d="M 105, 140 L 105, 280" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-cl-resp" x="115" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#2 [Resp]</text>
+
+          <!-- Payer APP <-> Payer PSP -->
+          <path id="wire-psp-req" d="M 155, 300 L 220, 300" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-psp-req" x="175" y="292" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#3</text>
+
+          <path id="wire-psp-resp" d="M 220, 320 L 155, 320" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-psp-resp" x="172" y="335" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#12</text>
+
+          <!-- Payer PSP <-> Central Switch -->
+          <path id="wire-switch-req" d="M 360, 300 L 470, 300" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-switch-req" x="402" y="292" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#4</text>
+
+          <path id="wire-switch-resp" d="M 470, 320 L 360, 320" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-switch-resp" x="402" y="335" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#11</text>
+
+          <!-- Central Switch <-> Payer's Bank -->
+          <path id="wire-bank-req" d="M 535, 275 L 535, 145" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-bank-req" x="495" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#5 [Req]</text>
+
+          <path id="wire-bank-resp" d="M 565, 145 L 565, 275" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-bank-resp" x="575" y="210" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">#10 [Resp]</text>
+
+          <!-- Payer's Bank <-> Payer Bank's HSM -->
+          <path id="wire-hsm-req" d="M 475, 98 L 365, 98" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-hsm-req" x="410" y="90" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#6</text>
+
+          <path id="wire-hsm-resp" d="M 365, 122 L 475, 122" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-hsm-resp" x="410" y="137" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#7</text>
+
+          <!-- Payer's Bank <-> Payer Bank's CBS -->
+          <path id="wire-cbs-req" d="M 625, 98 L 735, 98" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-cbs-req" x="670" y="90" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#8</text>
+
+          <path id="wire-cbs-resp" d="M 735, 122 L 625, 122" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow-neutral)" />
+          <text id="label-wire-cbs-resp" x="670" y="137" fill="#64748b" font-size="10" font-family="monospace" font-weight="bold">#9</text>
+        `;
+      }
+    }
 
     // =========================================================================
     // WORKBENCH UI CONTROLLER
     // =========================================================================
     function openFullscreenBackend(tab = 'pay') {
-      document.getElementById('fullscreen-backend-modal').classList.remove('hidden');
+      const modal = document.getElementById('fullscreen-backend-modal');
+      if (modal) modal.classList.remove('hidden');
       setBackendTab(tab);
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function closeFullscreenBackend() {
       resetSimulation();
-      document.getElementById('fullscreen-backend-modal').classList.add('hidden');
+      const modal = document.getElementById('fullscreen-backend-modal');
+      if (modal) modal.classList.add('hidden');
     }
 
     function setBackendTab(tab) {
@@ -851,36 +1103,47 @@
       const tabs = ['pay', 'pin', 'balance'];
       tabs.forEach(t => {
         const btn = document.getElementById(`fs-tab-${t}`);
-        if (t === tab) {
-          btn.className = 'px-4 py-2 text-xs font-bold rounded-xl transition bg-orange-500 text-white shadow';
-        } else {
-          btn.className = 'px-4 py-2 text-xs font-bold rounded-xl transition text-slate-400 hover:text-white';
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'px-4 py-2 text-xs font-bold rounded-xl transition bg-orange-500 text-white shadow';
+          } else {
+            btn.className = 'px-4 py-2 text-xs font-bold rounded-xl transition text-slate-400 hover:text-white';
+          }
         }
       });
 
+      // Contextual Block Filtering: Hide Payee blocks if not Pay Flow
+      const payeeBlocks = ['block-payee-psp', 'block-payee-bank', 'block-payee-cbs'];
+      if (tab === 'pay') {
+        payeeBlocks.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'block';
+        });
+      } else {
+        payeeBlocks.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        });
+      }
+
+      // Inject clean SVG wires for the flow
+      injectSvgWires(tab);
+
       if (tab === 'pin') {
-        document.getElementById('fs-step-title').innerText = "Pin Set Flow Selected";
-        document.getElementById('fs-step-desc').innerText = "Payer enters Debit Card details in App -> Common Library captures PIN via getCredential() -> Central Switch proxies encrypted credentials -> Payer's Bank verifies card with CBS and stores PIN hash in HSM via Bank's internal APIs (out of UPI purview).";
-        renderApiBox({
-          methodName: "getCredential() & Bank's internal APIs",
-          category: "CL & Internal Bank HSM",
-          details: "Common Library encrypts PIN block -> Dispatched to Payer's Bank -> Bank HSM provisions MPIN hash in internal hardware security container."
-        });
-        document.getElementById('fs-step-badge').innerText = "FLOW: PIN_SET";
-        document.getElementById('fs-step-indicator').innerText = "PIN SET";
+        document.getElementById('fs-step-title').innerText = "17-Step Pin Set Flow Ready (OTP & Registration)";
+        document.getElementById('fs-step-desc').innerHTML = "Click <b>Next</b> or <b>Simulate (3s / step)</b> to trace the complete OTP challenge followed by Common Library PIN registration via ReqRegMob.";
+        document.getElementById('fs-step-badge').innerText = "STEP: 0 / 17";
+        document.getElementById('fs-step-indicator').innerText = "STEP 0 / 17";
+        renderApiBox(null);
       } else if (tab === 'balance') {
-        document.getElementById('fs-step-title').innerText = "Check Balance Flow Selected";
-        document.getElementById('fs-step-desc').innerText = "Payer enters UPI PIN -> Common Library executes getCredential() -> Payer App sends ReqPay Type=DEBIT (BalInq) through Central Switch to Payer's Bank -> Bank verifies PIN in HSM and queries CBS via Bank's internal APIs -> Balance returned.";
-        renderApiBox({
-          methodName: "getCredential() & ReqPay / RespPay (BalInq)",
-          category: "CL, UPI & Internal CBS",
-          details: "Encrypted MPIN balance query verified by Payer Bank HSM and Core Banking System."
-        });
-        document.getElementById('fs-step-badge').innerText = "FLOW: BALANCE";
-        document.getElementById('fs-step-indicator').innerText = "CHECK BAL";
+        document.getElementById('fs-step-title').innerText = "11-Step Balance Enquiry Flow Ready";
+        document.getElementById('fs-step-desc').innerHTML = "Click <b>Next</b> or <b>Simulate (3s / step)</b> to trace account selection, PIN capture in CL, ReqBalEnq dispatch, and CBS balance fetch.";
+        document.getElementById('fs-step-badge').innerText = "STEP: 0 / 11";
+        document.getElementById('fs-step-indicator').innerText = "STEP 0 / 11";
+        renderApiBox(null);
       } else {
         document.getElementById('fs-step-title').innerText = "20-Step Pay Flow Ready";
-        document.getElementById('fs-step-desc').innerText = "Click Next or Simulate (3s / step) to step through the complete payment sequence.";
+        document.getElementById('fs-step-desc').innerHTML = "Click <b>Next</b> or <b>Simulate (3s / step)</b> to step through the complete payment sequence.";
         document.getElementById('fs-step-badge').innerText = "STEP: 0 / 20";
         document.getElementById('fs-step-indicator').innerText = "STEP 0 / 20";
         renderApiBox(null);
@@ -890,6 +1153,7 @@
     function renderApiBox(apiObj) {
       const container = document.getElementById('fs-api-container');
       const badge = document.getElementById('fs-api-badge');
+      if (!container || !badge) return;
 
       if (!apiObj) {
         badge.innerText = "AWAITING_STEP";
@@ -927,19 +1191,16 @@
       if (autoText) autoText.innerText = "Simulate (3s / step)";
       if (autoIcon) autoIcon.setAttribute('data-lucide', 'play');
 
-      // Clear all active wires and labels
-      for (let i = 1; i <= 19; i++) {
-        const wire = document.getElementById(`wire-${i}`);
-        if (wire) {
-          wire.setAttribute('stroke', '#334155');
-          wire.setAttribute('marker-end', 'url(#arrow-neutral)');
-          wire.classList.remove('wire-active');
-        }
-        const lbl = document.getElementById(`label-wire-${i}`);
-        if (lbl) lbl.setAttribute('fill', '#64748b');
-      }
+      const wires = document.querySelectorAll('#svg-wires-group path');
+      wires.forEach(wire => {
+        wire.setAttribute('stroke', '#334155');
+        wire.setAttribute('marker-end', 'url(#arrow-neutral)');
+        wire.classList.remove('wire-active');
+      });
 
-      // Reset all entity blocks
+      const labels = document.querySelectorAll('#svg-wires-group text');
+      labels.forEach(lbl => lbl.setAttribute('fill', '#64748b'));
+
       const allBlockIds = ['block-cl', 'block-payer-app', 'block-payer-psp', 'block-central-switch', 'block-payee-psp', 'block-payer-bank', 'block-payer-hsm', 'block-payer-cbs', 'block-payee-bank', 'block-payee-cbs'];
       allBlockIds.forEach(id => {
         const b = document.getElementById(id);
@@ -953,51 +1214,55 @@
         }
       });
 
-      document.getElementById('btn-prev-step').disabled = true;
-      document.getElementById('btn-next-step').disabled = false;
-      lucide.createIcons();
+      const prevBtn = document.getElementById('btn-prev-step');
+      const nextBtn = document.getElementById('btn-next-step');
+      if (prevBtn) prevBtn.disabled = true;
+      if (nextBtn) nextBtn.disabled = false;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function getActiveSteps() {
+      if (currentFlowType === 'pin') return PIN_SET_FLOW_STEPS;
+      if (currentFlowType === 'balance') return BALANCE_FLOW_STEPS;
+      return PAY_FLOW_STEPS;
     }
 
     function stepSimulation(direction) {
-      if (currentFlowType !== 'pay') {
-        alert('Step-by-step interactive arrows are configured for 1. Pay Flow. Switching to 1. Pay Flow.');
-        setBackendTab('pay');
-        return;
-      }
+      const activeSteps = getActiveSteps();
 
       currentStepIndex += direction;
       if (currentStepIndex < 1) currentStepIndex = 1;
-      if (currentStepIndex > PAY_FLOW_STEPS.length) currentStepIndex = PAY_FLOW_STEPS.length;
+      if (currentStepIndex > activeSteps.length) currentStepIndex = activeSteps.length;
 
       renderStep(currentStepIndex - 1);
     }
 
     function renderStep(index) {
-      const step = PAY_FLOW_STEPS[index];
+      const activeSteps = getActiveSteps();
+      const step = activeSteps[index];
+      if (!step) return;
 
-      document.getElementById('fs-step-badge').innerText = `STEP: ${step.stepNum} / 20`;
-      document.getElementById('fs-step-indicator').innerText = `STEP ${step.stepNum} / 20`;
+      document.getElementById('fs-step-badge').innerText = `STEP: ${step.stepNum} / ${activeSteps.length}`;
+      document.getElementById('fs-step-indicator').innerText = `STEP ${step.stepNum} / ${activeSteps.length}`;
       document.getElementById('fs-step-title').innerText = step.title;
       document.getElementById('fs-step-desc').innerHTML = step.desc;
       renderApiBox(step.apiInfo);
 
-      // Buttons state
-      document.getElementById('btn-prev-step').disabled = (index === 0);
-      document.getElementById('btn-next-step').disabled = (index === PAY_FLOW_STEPS.length - 1);
+      const prevBtn = document.getElementById('btn-prev-step');
+      const nextBtn = document.getElementById('btn-next-step');
+      if (prevBtn) prevBtn.disabled = (index === 0);
+      if (nextBtn) nextBtn.disabled = (index === activeSteps.length - 1);
 
-      // Reset all wires and labels
-      for (let i = 1; i <= 19; i++) {
-        const wire = document.getElementById(`wire-${i}`);
-        if (wire) {
-          wire.setAttribute('stroke', '#334155');
-          wire.setAttribute('marker-end', 'url(#arrow-neutral)');
-          wire.classList.remove('wire-active');
-        }
-        const lbl = document.getElementById(`label-wire-${i}`);
-        if (lbl) lbl.setAttribute('fill', '#64748b');
-      }
+      const wires = document.querySelectorAll('#svg-wires-group path');
+      wires.forEach(wire => {
+        wire.setAttribute('stroke', '#334155');
+        wire.setAttribute('marker-end', 'url(#arrow-neutral)');
+        wire.classList.remove('wire-active');
+      });
 
-      // Reset all blocks
+      const labels = document.querySelectorAll('#svg-wires-group text');
+      labels.forEach(lbl => lbl.setAttribute('fill', '#64748b'));
+
       const allBlockIds = ['block-cl', 'block-payer-app', 'block-payer-psp', 'block-central-switch', 'block-payee-psp', 'block-payer-bank', 'block-payer-hsm', 'block-payer-cbs', 'block-payee-bank', 'block-payee-cbs'];
       allBlockIds.forEach(id => {
         const b = document.getElementById(id);
@@ -1011,7 +1276,6 @@
         }
       });
 
-      // Activate only current step wire
       step.activeWires.forEach(wId => {
         const el = document.getElementById(wId);
         if (el) {
@@ -1023,7 +1287,6 @@
         if (lbl) lbl.setAttribute('fill', '#f97316');
       });
 
-      // Highlight only current step blocks
       step.activeBlocks.forEach(bId => {
         const el = document.getElementById(bId);
         if (el) {
@@ -1038,11 +1301,6 @@
     }
 
     function toggleAutoSimulation() {
-      if (currentFlowType !== 'pay') {
-        alert('Auto simulation is configured for 1. Pay Flow. Switching to Pay Flow.');
-        setBackendTab('pay');
-      }
-
       if (isAutoSimulating) {
         if (autoSimTimer) clearTimeout(autoSimTimer);
         isAutoSimulating = false;
@@ -1054,32 +1312,343 @@
         document.getElementById('btn-auto-icon').setAttribute('data-lucide', 'pause');
         runAutoLoop();
       }
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function runAutoLoop() {
       if (!isAutoSimulating) return;
+      const activeSteps = getActiveSteps();
 
       renderStep(currentStepIndex);
       currentStepIndex++;
 
-      if (currentStepIndex < PAY_FLOW_STEPS.length) {
-        autoSimTimer = setTimeout(runAutoLoop, 3200); // 3.2-second clear gap
+      if (currentStepIndex < activeSteps.length) {
+        autoSimTimer = setTimeout(runAutoLoop, 3200);
       } else {
         isAutoSimulating = false;
         document.getElementById('btn-auto-text').innerText = "Simulate Again";
         document.getElementById('btn-auto-icon').setAttribute('data-lucide', 'rotate-ccw');
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
       }
     }
 
     // =========================================================================
-    // MOBILE APP FLOWS (PRESERVED COMPLETE)
+    // 5-STEP COMMON LIBRARY PIN SET / RESET JOURNEY CONTROLLER
+    // =========================================================================
+    function triggerSetPinJourney() {
+      clMode = 'set-pin';
+      clSetPinStep = 1;
+      enteredPinBuffer = '';
+      cardLast6Val = '';
+      cardExpiryVal = '';
+      otpVal = '';
+      newPinVal = '';
+
+      const tracker = document.getElementById('cl-step-tracker');
+      const sAmt = document.getElementById('cl-strip-amount');
+      const bName = document.getElementById('cl-bank-name-header');
+
+      if (tracker) tracker.classList.remove('hidden');
+      if (sAmt) sAmt.innerText = 'SET UPI PIN';
+      if (bName) bName.innerText = appState.accountInfo.bankName || 'Bank A';
+
+      // 1. Show Bank SMS Notification Banner
+      showBankSmsNotification('849201', 'Bank A');
+
+      // 2. Open CL on Step 1: Card last 6 digits
+      renderClStepView();
+
+      const modal = document.getElementById('mpin-modal');
+      if (modal) modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function showBankSmsNotification(otpCode, bankName) {
+      const banner = document.getElementById('sms-push-banner');
+      if (!banner) return;
+
+      banner.classList.remove('hidden');
+      setTimeout(() => {
+        banner.classList.remove('-translate-y-full');
+      }, 50);
+
+      setTimeout(() => {
+        banner.classList.add('-translate-y-full');
+        setTimeout(() => banner.classList.add('hidden'), 500);
+      }, 7000);
+    }
+
+    function renderClStepView() {
+      const stepIndicator = document.getElementById('cl-step-indicator');
+      const dots = document.getElementById('cl-step-dots')?.children;
+      const promptTitle = document.getElementById('cl-prompt-title');
+      const subStatus = document.getElementById('cl-sub-status');
+      const eyeBtn = document.getElementById('cl-eye-btn');
+      const dashesContainer = document.getElementById('cl-slot-dashes');
+      if (!dashesContainer) return;
+
+      enteredPinBuffer = '';
+      isPinVisible = false;
+      updateEyeIconState();
+
+      if (clMode === 'set-pin') {
+        if (stepIndicator) stepIndicator.innerText = `STEP ${clSetPinStep} OF 5`;
+        if (dots) {
+          for (let i = 0; i < 5; i++) {
+            dots[i].className = (i + 1 <= clSetPinStep) ? 'w-2 h-2 rounded-full bg-[#12368c]' : 'w-2 h-2 rounded-full bg-slate-200';
+          }
+        }
+      }
+
+      if (clMode === 'auth') {
+        // Standard Balance / Pay PIN entry
+        if (eyeBtn) eyeBtn.classList.remove('hidden');
+        if (promptTitle) promptTitle.innerText = 'ENTER UPI PIN';
+        if (subStatus) subStatus.innerHTML = '';
+        buildUnderlineSlots(6);
+        return;
+      }
+
+      // 5 Steps of Setting PIN
+      switch (clSetPinStep) {
+        case 1: // Card Last 6 Digits
+          if (eyeBtn) eyeBtn.classList.add('hidden');
+          if (promptTitle) promptTitle.innerText = 'ENTER LAST 6 DIGITS OF DEBIT CARD';
+          if (subStatus) subStatus.innerHTML = `<span class="text-[9px] text-slate-500">Look at the front of your debit card</span>`;
+          buildUnderlineSlots(6);
+          break;
+
+        case 2: // Card Expiry MMYY
+          if (eyeBtn) eyeBtn.classList.add('hidden');
+          if (promptTitle) promptTitle.innerText = 'ENTER CARD EXPIRY (MMYY)';
+          if (subStatus) subStatus.innerHTML = `<span class="text-[9px] text-slate-500">Format: Month / Year (e.g. 09 / 28)</span>`;
+          buildUnderlineSlots(4);
+          break;
+
+        case 3: // OTP Auto-Fetched
+          if (eyeBtn) eyeBtn.classList.add('hidden');
+          if (promptTitle) promptTitle.innerText = 'BANK SMS OTP (AUTO-READ)';
+          if (subStatus) subStatus.innerHTML = `<span class="text-[9px] font-bold text-amber-600 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Auto-reading SMS...</span>`;
+          buildUnderlineSlots(6);
+          
+          // Auto-fetch simulation
+          setTimeout(() => {
+            enteredPinBuffer = '849201';
+            updateSlotDashes();
+            if (subStatus) subStatus.innerHTML = `<span class="text-[9px] font-bold text-emerald-600 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-600"></i> Auto-fetched from Bank A SMS</span>`;
+            if (window.lucide) lucide.createIcons();
+          }, 1100);
+          break;
+
+        case 4: // Enter New UPI PIN
+          if (eyeBtn) eyeBtn.classList.remove('hidden');
+          if (promptTitle) promptTitle.innerText = 'ENTER 6-DIGIT UPI PIN';
+          if (subStatus) subStatus.innerHTML = `<span class="text-[9px] text-slate-500">Do not share your PIN with anyone</span>`;
+          buildUnderlineSlots(6);
+          break;
+
+        case 5: // Confirm UPI PIN
+          if (eyeBtn) eyeBtn.classList.remove('hidden');
+          if (promptTitle) promptTitle.innerText = 'CONFIRM 6-DIGIT UPI PIN';
+          if (subStatus) subStatus.innerHTML = `<span class="text-[9px] text-slate-500">Re-enter the same 6-digit PIN</span>`;
+          buildUnderlineSlots(6);
+          break;
+      }
+    }
+
+    function buildUnderlineSlots(count) {
+      const dashesContainer = document.getElementById('cl-slot-dashes');
+      if (!dashesContainer) return;
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `
+          <div class="w-8 flex flex-col items-center">
+            <span class="h-6 text-base font-bold text-[#12368c] leading-none mb-1 font-mono"></span>
+            <div class="w-full h-0.5 bg-slate-400"></div>
+          </div>
+        `;
+      }
+      dashesContainer.innerHTML = html;
+    }
+
+    function pressClKey(digit) {
+      let maxLen = 6;
+      if (clMode === 'set-pin' && clSetPinStep === 2) maxLen = 4; // MMYY is 4 digits
+
+      if (enteredPinBuffer.length < maxLen) {
+        enteredPinBuffer += digit;
+        updateSlotDashes();
+      }
+    }
+
+    function clearLastClDigit() {
+      if (enteredPinBuffer.length > 0) {
+        enteredPinBuffer = enteredPinBuffer.slice(0, -1);
+        updateSlotDashes();
+      }
+    }
+
+    function updateSlotDashes() {
+      const container = document.getElementById('cl-slot-dashes');
+      if (!container) return;
+      const slots = container.children;
+
+      for (let i = 0; i < slots.length; i++) {
+        const span = slots[i].querySelector('span');
+        const underline = slots[i].querySelector('div');
+
+        if (i < enteredPinBuffer.length) {
+          // If in PIN steps, mask with dot unless show eye is active
+          if ((clMode === 'auth') || (clMode === 'set-pin' && (clSetPinStep === 4 || clSetPinStep === 5))) {
+            span.innerText = isPinVisible ? enteredPinBuffer[i] : '●';
+          } else {
+            span.innerText = enteredPinBuffer[i];
+          }
+          underline.className = 'w-full h-0.5 bg-[#12368c]';
+        } else {
+          span.innerText = '';
+          underline.className = 'w-full h-0.5 bg-slate-400';
+        }
+      }
+    }
+
+    function submitClStep() {
+      // 1. Auth Mode (Normal Check Balance or Payment)
+      if (clMode === 'auth') {
+        if (enteredPinBuffer.length !== 6) {
+          showInAppToast('Please enter complete 6-digit PIN.', 'error');
+          return;
+        }
+        const pin = enteredPinBuffer;
+        const callback = pendingPinAction;
+        closePinModal();
+        if (callback) callback(pin);
+        return;
+      }
+
+      // 2. Set/Reset PIN 5-Step Process
+      switch (clSetPinStep) {
+        case 1: // Validate Card Last 6
+          if (enteredPinBuffer.length !== 6) {
+            showInAppToast('Please enter all 6 digits of Debit Card', 'error');
+            return;
+          }
+          cardLast6Val = enteredPinBuffer;
+          clSetPinStep = 2;
+          renderClStepView();
+          break;
+
+        case 2: // Validate Expiry MMYY
+          if (enteredPinBuffer.length !== 4) {
+            showInAppToast('Please enter 4-digit expiry (MMYY)', 'error');
+            return;
+          }
+          cardExpiryVal = enteredPinBuffer;
+          clSetPinStep = 3;
+          renderClStepView();
+          break;
+
+        case 3: // Validate OTP
+          if (enteredPinBuffer.length !== 6) {
+            showInAppToast('Please enter or await auto-fetched OTP', 'error');
+            return;
+          }
+          otpVal = enteredPinBuffer;
+          clSetPinStep = 4;
+          renderClStepView();
+          break;
+
+        case 4: // Validate Enter PIN
+          if (enteredPinBuffer.length !== 6) {
+            showInAppToast('Please enter complete 6-digit PIN', 'error');
+            return;
+          }
+          newPinVal = enteredPinBuffer;
+          clSetPinStep = 5;
+          renderClStepView();
+          break;
+
+        case 5: // Validate Confirm PIN
+          if (enteredPinBuffer.length !== 6) {
+            showInAppToast('Please confirm 6-digit PIN', 'error');
+            return;
+          }
+          if (enteredPinBuffer !== newPinVal) {
+            showInAppToast('PIN mismatch. Please retry setting PIN.', 'error');
+            clSetPinStep = 4;
+            renderClStepView();
+            return;
+          }
+
+          // Complete Registration
+          appState.mpin = newPinVal;
+          appState.isUserRegistered = true;
+          saveState();
+          closePinModal();
+          showInAppToast('UPI PIN set successfully for Bank A!', 'success');
+          navigateTo('home');
+          break;
+      }
+    }
+
+    function promptMpin(actionCallback, displayAmount = '1000') {
+      clMode = 'auth';
+      enteredPinBuffer = '';
+      isPinVisible = false;
+
+      const tracker = document.getElementById('cl-step-tracker');
+      const bName = document.getElementById('cl-bank-name-header');
+      const sAmt = document.getElementById('cl-strip-amount');
+
+      if (tracker) tracker.classList.add('hidden');
+      if (bName) bName.innerText = appState.accountInfo.bankName || 'Bank A';
+      if (sAmt) sAmt.innerText = `₹${displayAmount}`;
+
+      renderClStepView();
+
+      pendingPinAction = actionCallback;
+      const modal = document.getElementById('mpin-modal');
+      if (modal) modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closePinModal() {
+      enteredPinBuffer = '';
+      pendingPinAction = null;
+      clMode = 'auth';
+      clSetPinStep = 1;
+      const modal = document.getElementById('mpin-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function togglePinVisibility() {
+      isPinVisible = !isPinVisible;
+      updateEyeIconState();
+      updateSlotDashes();
+    }
+
+    function updateEyeIconState() {
+      const eyeIcon = document.getElementById('cl-eye-icon');
+      const eyeLabel = document.getElementById('cl-eye-label');
+      if (!eyeIcon || !eyeLabel) return;
+      if (isPinVisible) {
+        eyeIcon.setAttribute('data-lucide', 'eye-off');
+        eyeLabel.innerText = 'HIDE';
+      } else {
+        eyeIcon.setAttribute('data-lucide', 'eye');
+        eyeLabel.innerText = 'SHOW';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // =========================================================================
+    // MOBILE APP FLOWS (HOME, SCAN, PAY, COLLECT)
     // =========================================================================
     function showInAppToast(message, type = 'info') {
       const toast = document.getElementById('inapp-toast');
       const text = document.getElementById('toast-message');
       const icon = document.getElementById('toast-icon');
+      if (!toast || !text) return;
 
       if (toastTimeout) clearTimeout(toastTimeout);
 
@@ -1088,17 +1657,17 @@
 
       if (type === 'error') {
         toast.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
-        icon.setAttribute('data-lucide', 'alert-circle');
+        if (icon) icon.setAttribute('data-lucide', 'alert-circle');
       } else if (type === 'success') {
         toast.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
-        icon.setAttribute('data-lucide', 'check-circle-2');
+        if (icon) icon.setAttribute('data-lucide', 'check-circle-2');
       } else {
         toast.classList.add('bg-orange-50', 'border-orange-200', 'text-orange-900');
-        icon.setAttribute('data-lucide', 'info');
+        if (icon) icon.setAttribute('data-lucide', 'info');
       }
 
       toast.classList.remove('hidden');
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
       toastTimeout = setTimeout(() => {
         toast.classList.add('hidden');
@@ -1109,7 +1678,7 @@
       if (viewName !== 'backend-flow') {
         previousAppView = viewName;
       }
-      if (!appState.isUserRegistered && !['register-user', 'sms-app', 'bank-selection', 'card-input', 'backend-flow'].includes(viewName)) {
+      if (!appState.isUserRegistered && !['register-user', 'sms-app', 'bank-selection', 'backend-flow'].includes(viewName)) {
         return;
       }
       currentView = viewName;
@@ -1126,138 +1695,55 @@
       });
     }
 
-    function promptMpin(actionCallback, displayAmount = '1000') {
-      enteredPinBuffer = '';
-      isPinVisible = false;
-      updatePinDashes();
-      updateEyeIconState();
-
-      document.getElementById('cl-bank-name-header').innerText = appState.accountInfo.bankName || 'Bank A';
-      document.getElementById('cl-strip-amount').innerText = `₹${displayAmount}`;
-
-      pendingPinAction = actionCallback;
-      document.getElementById('mpin-modal').classList.remove('hidden');
-      lucide.createIcons();
-    }
-
-    function closePinModal() {
-      enteredPinBuffer = '';
-      pendingPinAction = null;
-      document.getElementById('mpin-modal').classList.add('hidden');
-    }
-
-    function pressPinKey(digit) {
-      if (enteredPinBuffer.length < 6) {
-        enteredPinBuffer += digit;
-        updatePinDashes();
-      }
-    }
-
-    function clearLastPinDigit() {
-      if (enteredPinBuffer.length > 0) {
-        enteredPinBuffer = enteredPinBuffer.slice(0, -1);
-        updatePinDashes();
-      }
-    }
-
-    function togglePinVisibility() {
-      isPinVisible = !isPinVisible;
-      updateEyeIconState();
-      updatePinDashes();
-    }
-
-    function updateEyeIconState() {
-      const eyeIcon = document.getElementById('cl-eye-icon');
-      const eyeLabel = document.getElementById('cl-eye-label');
-      if (isPinVisible) {
-        eyeIcon.setAttribute('data-lucide', 'eye-off');
-        eyeLabel.innerText = 'HIDE';
-      } else {
-        eyeIcon.setAttribute('data-lucide', 'eye');
-        eyeLabel.innerText = 'SHOW';
-      }
-      lucide.createIcons();
-    }
-
-    function updatePinDashes() {
-      const slots = document.getElementById('cl-pin-dashes').children;
-      for (let i = 0; i < 6; i++) {
-        const span = slots[i].querySelector('span');
-        const underline = slots[i].querySelector('div');
-
-        if (i < enteredPinBuffer.length) {
-          span.innerText = isPinVisible ? enteredPinBuffer[i] : '●';
-          underline.className = 'w-full h-0.5 bg-[#12368c]';
-        } else {
-          span.innerText = '';
-          underline.className = 'w-full h-0.5 bg-slate-400';
-        }
-      }
-    }
-
-    function submitEnteredPin() {
-      if (enteredPinBuffer.length !== 6) {
-        showInAppToast('Please enter complete 6-digit PIN on safe pad.', 'error');
-        return;
-      }
-      const pin = enteredPinBuffer;
-      const callback = pendingPinAction;
-      closePinModal();
-      if (callback) callback(pin);
-    }
-
     function renderCurrentView() {
       const container = document.getElementById('mobile-view-container');
       const nav = document.getElementById('mobile-nav');
       const header = document.getElementById('app-top-header');
+      if (!container) return;
 
       if (!appState.isUserRegistered) {
-        nav.classList.add('hidden');
+        if (nav) nav.classList.add('hidden');
       } else {
-        nav.classList.remove('hidden');
+        if (nav) nav.classList.remove('hidden');
       }
 
       switch (currentView) {
         case 'register-user':
-          header.classList.remove('hidden');
+          if (header) header.classList.remove('hidden');
           renderRegisterUser(container);
           break;
         case 'sms-app':
-          header.classList.add('hidden');
+          if (header) header.classList.add('hidden');
           renderSmsAppView(container);
           break;
         case 'bank-selection':
-          header.classList.remove('hidden');
+          if (header) header.classList.remove('hidden');
           renderBankSelection(container);
           break;
-        case 'card-input':
-          header.classList.remove('hidden');
-          renderCardDetailsView(container);
-          break;
         case 'home':
-          header.classList.remove('hidden');
+          if (header) header.classList.remove('hidden');
           renderHomeView(container);
           break;
         case 'pay-vpa':
-          header.classList.remove('hidden');
+          if (header) header.classList.remove('hidden');
           renderPayVpaView(container);
           break;
         case 'scan':
-          header.classList.remove('hidden');
+          if (header) header.classList.remove('hidden');
           renderScanView(container);
           break;
         case 'collect':
-          header.classList.remove('hidden');
+          if (header) header.classList.remove('hidden');
           renderCollectView(container);
           break;
         case 'history':
-          header.classList.remove('hidden');
+          if (header) header.classList.remove('hidden');
           renderHistoryView(container);
           break;
         default:
           renderRegisterUser(container);
       }
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function renderRegisterUser(container) {
@@ -1328,6 +1814,7 @@
     function selectSimSlot(slot) {
       chosenSimSlot = slot;
       appState.selectedSim = slot;
+      saveState();
       renderCurrentView();
     }
 
@@ -1392,15 +1879,17 @@
       const bubble = document.getElementById('sms-outgoing-bubble');
       const btn = document.getElementById('sms-send-btn');
       
-      btn.disabled = true;
-      btn.innerHTML = `<span class="inline-block animate-spin mr-1">⟳</span> Handshaking with Gateway...`;
-      bubble.classList.add('animate-fly-out');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="inline-block animate-spin mr-1">⟳</span> Handshaking with Gateway...`;
+      }
+      if (bubble) bubble.classList.add('animate-fly-out');
 
       await new Promise(r => setTimeout(r, 600));
 
       const overlay = document.getElementById('sms-success-overlay');
-      overlay.classList.remove('hidden');
-      lucide.createIcons();
+      if (overlay) overlay.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
 
       await new Promise(r => setTimeout(r, 1000));
       navigateTo('bank-selection');
@@ -1441,7 +1930,7 @@
               <div class="text-[11px] font-mono text-slate-700">Savings A/C: •••• •••• 4821</div>
               <div class="text-[10px] text-slate-500 mt-0.5">Assigned VPA: <span class="text-orange-600 font-mono font-bold">${appState.vpaHandle}</span></div>
             </div>
-            <button onclick="navigateTo('card-input')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 transition mt-1 flex items-center justify-center gap-1">
+            <button onclick="triggerSetPinJourney()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 transition mt-1 flex items-center justify-center gap-1">
               <span>Proceed to Set FastPay PIN</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
             </button>
@@ -1473,73 +1962,18 @@
       const listGroup = document.getElementById('bank-list-group');
 
       if (bankId === 'bank-a') {
-        errorToast.classList.add('hidden');
-        listGroup.classList.add('opacity-50', 'pointer-events-none');
-        successCard.classList.remove('hidden');
+        if (errorToast) errorToast.classList.add('hidden');
+        if (listGroup) listGroup.classList.add('opacity-50', 'pointer-events-none');
+        if (successCard) successCard.classList.remove('hidden');
         appState.linkedBank = 'Bank A';
         saveState();
         showInAppToast('Account fetched successfully from Bank A!', 'success');
       } else {
-        successCard.classList.add('hidden');
-        errorToast.classList.remove('hidden');
+        if (successCard) successCard.classList.add('hidden');
+        if (errorToast) errorToast.classList.remove('hidden');
         showInAppToast('No account found for ' + bankId.toUpperCase(), 'error');
       }
-      lucide.createIcons();
-    }
-
-    function renderCardDetailsView(container) {
-      container.innerHTML = `
-        <div class="space-y-3 pt-1">
-          <div class="flex items-center gap-1.5">
-            <button onclick="navigateTo('bank-selection')" class="text-slate-500 hover:text-slate-800">
-              <i data-lucide="chevron-left" class="w-4 h-4"></i>
-            </button>
-            <h3 class="text-xs font-bold text-slate-900">Debit Card Verification</h3>
-          </div>
-
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-3 shadow-sm">
-            <p class="text-[11px] text-slate-600">Enter card details to configure your PIN for <span class="text-orange-600 font-bold">${appState.accountInfo.bankName}</span>.</p>
-
-            <div>
-              <label class="text-[9px] text-slate-500 uppercase tracking-wider block mb-1 font-bold">Last 6 Digits of Debit Card</label>
-              <input id="card-digits" type="text" maxlength="6" value="512948" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-mono text-slate-900 font-semibold focus:outline-orange-500">
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-[9px] text-slate-500 uppercase tracking-wider block mb-1 font-bold">Valid Thru (MM)</label>
-                <input type="text" maxlength="2" value="09" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-mono text-slate-900 font-semibold focus:outline-orange-500">
-              </div>
-              <div>
-                <label class="text-[9px] text-slate-500 uppercase tracking-wider block mb-1 font-bold">Valid Thru (YY)</label>
-                <input type="text" maxlength="2" value="28" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-mono text-slate-900 font-semibold focus:outline-orange-500">
-              </div>
-            </div>
-
-            <button onclick="launchSetPinOnCL()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-emerald-600 text-white font-bold text-xs mt-2 flex items-center justify-center gap-1.5 shadow-lg shadow-orange-500/20">
-              <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-              <span>Launch Common Library (CL) Pad</span>
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    function launchSetPinOnCL() {
-      promptMpin(newPin => {
-        promptMpin(async (confirmPin) => {
-          if (newPin !== confirmPin) {
-            showInAppToast('PIN mismatch. Please retry setting your PIN.', 'error');
-            return;
-          }
-
-          appState.mpin = newPin;
-          appState.isUserRegistered = true;
-          saveState();
-          showInAppToast('Security PIN set successfully!', 'success');
-          navigateTo('home');
-        }, '0');
-      }, '0');
+      if (window.lucide) lucide.createIcons();
     }
 
     function renderHomeView(container) {
@@ -1604,7 +2038,7 @@
               <span class="text-[10px] font-bold text-slate-800">Scan QR</span>
             </button>
 
-            <button onclick="navigateTo('card-input')" class="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-400 flex flex-col items-center gap-1 group shadow-sm transition">
+            <button onclick="triggerSetPinJourney()" class="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-400 flex flex-col items-center gap-1 group shadow-sm transition">
               <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 group-hover:bg-slate-700 group-hover:text-white flex items-center justify-center transition">
                 <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
               </div>
@@ -1695,12 +2129,15 @@
       const b = document.getElementById('vpa-badge');
       if (b) b.classList.remove('hidden');
       showInAppToast('VPA resolved: Merchant ABC Enterprise', 'success');
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function initiatePayment() {
-      const vpa = document.getElementById('target-vpa').value;
-      const amt = parseFloat(document.getElementById('target-amount').value);
+      const vpaEl = document.getElementById('target-vpa');
+      const amtEl = document.getElementById('target-amount');
+      if (!vpaEl || !amtEl) return;
+      const vpa = vpaEl.value;
+      const amt = parseFloat(amtEl.value);
 
       if (isNaN(amt) || amt <= 0) {
         showInAppToast('Please enter a valid amount.', 'error');
@@ -1736,6 +2173,7 @@
       saveState();
 
       const container = document.getElementById('mobile-view-container');
+      if (!container) return;
       container.innerHTML = `
         <div class="h-full flex flex-col justify-center items-center text-center space-y-3 px-1">
           <div class="w-16 h-16 rounded-full bg-emerald-100 border-2 border-emerald-500 text-emerald-600 flex items-center justify-center pulse-animation">
@@ -1768,7 +2206,7 @@
           </button>
         </div>
       `;
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function renderScanView(container) {
@@ -1825,6 +2263,7 @@
 
     function renderDynamicQrPaymentConfirmation(merchantVpa, merchantName, amount) {
       const container = document.getElementById('mobile-view-container');
+      if (!container) return;
       
       container.innerHTML = `
         <div class="space-y-3 pt-1">
@@ -1871,7 +2310,7 @@
           </div>
         </div>
       `;
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function confirmDynamicQrPayment(merchantVpa, amount) {
@@ -1953,8 +2392,8 @@
     }
 
     function sendCollect() {
-      const p = document.getElementById('collect-payer').value;
-      showInAppToast(`Collect request pushed to ${p}!`, 'success');
+      const p = document.getElementById('collect-payer');
+      if (p) showInAppToast(`Collect request pushed to ${p.value}!`, 'success');
       navigateTo('home');
     }
 
@@ -1994,16 +2433,23 @@
       `;
     }
 
-    // Live Clock
+    // Live Clock Update
     setInterval(() => {
       const now = new Date();
       const el = document.getElementById('live-phone-time');
       if (el) el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }, 1000);
 
-    // Initial Launch
-    renderCurrentView();
-    lucide.createIcons();
+    // Initial DOM Launch
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCurrentView();
+      if (window.lucide) lucide.createIcons();
+    });
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      renderCurrentView();
+      if (window.lucide) lucide.createIcons();
+    }
   </script>
 </body>
 </html>
