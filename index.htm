@@ -11,7 +11,11 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     /* Prevent double-tap zoom across clickable controls and screen areas */
-    html, body, button, input, select, a, #phone-screen, #fullscreen-backend-modal {
+    html, body {
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+    }
+    button, input, select, a, #phone-screen, #fullscreen-backend-modal {
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
@@ -46,12 +50,12 @@
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-800 min-h-screen flex items-center justify-center p-4 font-sans antialiased select-none">
+<body class="bg-slate-900 text-slate-800 min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans antialiased select-none overflow-x-hidden">
 
   <!-- ========================================================================= -->
-  <!-- 1. MOBILE PHONE SCREEN CONTAINER                                          -->
+  <!-- 1. MOBILE PHONE SCREEN CONTAINER (RESPONSIVE)                            -->
   <!-- ========================================================================= -->
-  <div class="w-[390px] h-[800px] bg-white rounded-[50px] p-3 border-8 border-slate-800 shadow-2xl shadow-slate-950/80 relative flex flex-col overflow-hidden text-slate-800 z-10">
+  <div class="w-full max-w-[390px] h-[94vh] max-h-[820px] min-h-[660px] bg-white rounded-[44px] p-2.5 sm:p-3 border-4 sm:border-8 border-slate-800 shadow-2xl shadow-slate-950/80 relative flex flex-col overflow-hidden text-slate-800 z-10">
     
     <!-- Dynamic Island / Speaker Notch -->
     <div class="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-900 rounded-full z-40 flex items-center justify-center pointer-events-none">
@@ -60,7 +64,7 @@
     </div>
 
     <!-- Phone Screen Interior -->
-    <div id="phone-screen" class="w-full h-full bg-slate-50 rounded-[40px] overflow-hidden flex flex-col relative border border-slate-200">
+    <div id="phone-screen" class="w-full h-full bg-slate-50 rounded-[34px] sm:rounded-[38px] overflow-hidden flex flex-col relative border border-slate-200">
       
       <!-- Native Bank SMS Push Notification Banner -->
       <div id="sms-push-banner" class="hidden absolute top-2 inset-x-3 z-[70] bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-300 transition-all duration-500 transform -translate-y-full">
@@ -198,9 +202,7 @@
           </div>
 
           <!-- Step Slots Container (Underlines & Values) -->
-          <div class="flex justify-center items-center gap-3 mb-2" id="cl-slot-dashes">
-            <!-- Dynamic Slots Injected via JS -->
-          </div>
+          <div class="flex justify-center items-center gap-3 mb-2" id="cl-slot-dashes"></div>
 
           <!-- Helper Status Badge -->
           <div id="cl-sub-status" class="h-6 flex items-center justify-center mt-1"></div>
@@ -256,74 +258,74 @@
   <!-- ========================================================================= -->
   <!-- 2. FULL-SCREEN SYMMETRICAL BACKEND WORKBENCH                              -->
   <!-- ========================================================================= -->
-  <div id="fullscreen-backend-modal" class="hidden fixed inset-0 z-50 bg-[#070b14] text-slate-100 flex flex-col p-6 overflow-hidden select-none font-sans">
+  <div id="fullscreen-backend-modal" class="hidden fixed inset-0 z-50 bg-[#070b14] text-slate-100 flex flex-col p-4 sm:p-6 overflow-hidden select-none font-sans">
     
     <!-- Top Command Header -->
-    <header class="flex items-center justify-between pb-4 border-b border-slate-800 shrink-0">
+    <header class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-800 shrink-0">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center border border-orange-500/30 shadow-lg shadow-orange-500/10">
           <i data-lucide="network" class="w-6 h-6"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-lg font-black text-white tracking-wide uppercase">Core Backend Flow Engine</h2>
+            <h2 class="text-base sm:text-lg font-black text-white tracking-wide uppercase">Core Backend Flow Engine</h2>
             <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">UPI Switch Protocol</span>
           </div>
-          <p class="text-xs text-slate-400">Contextual topology — Only relevant blocks & clean numbered request/response arrows are rendered</p>
+          <p class="text-[11px] sm:text-xs text-slate-400">Contextual topology — Only relevant blocks & clean numbered request/response arrows are rendered</p>
         </div>
       </div>
 
       <!-- Flow Selector Tabs & Exit -->
       <div class="flex items-center gap-3">
         <div class="bg-slate-900 border border-slate-800 p-1 rounded-2xl flex items-center gap-1 shadow-inner">
-          <button onclick="setBackendTab('pay')" id="fs-tab-pay" class="px-4 py-2 text-xs font-bold rounded-xl transition bg-orange-500 text-white shadow">
+          <button onclick="setBackendTab('pay')" id="fs-tab-pay" class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-xl transition bg-orange-500 text-white shadow">
             1. Pay Flow
           </button>
-          <button onclick="setBackendTab('pin')" id="fs-tab-pin" class="px-4 py-2 text-xs font-bold rounded-xl transition text-slate-400 hover:text-white">
+          <button onclick="setBackendTab('pin')" id="fs-tab-pin" class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-xl transition text-slate-400 hover:text-white">
             2. Pin Set Flow
           </button>
-          <button onclick="setBackendTab('balance')" id="fs-tab-balance" class="px-4 py-2 text-xs font-bold rounded-xl transition text-slate-400 hover:text-white">
+          <button onclick="setBackendTab('balance')" id="fs-tab-balance" class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-xl transition text-slate-400 hover:text-white">
             3. Check Balance Flow
           </button>
         </div>
 
-        <button onclick="closeFullscreenBackend()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition border border-slate-700">
+        <button onclick="closeFullscreenBackend()" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition border border-slate-700">
           <i data-lucide="x" class="w-4 h-4"></i>
-          <span>Exit Workspace</span>
+          <span class="hidden sm:inline">Exit</span>
         </button>
       </div>
     </header>
 
     <!-- Main Workspace Layout -->
-    <div class="flex-1 grid grid-cols-12 gap-6 pt-4 min-h-0">
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 pt-3 sm:pt-4 min-h-0 overflow-y-auto lg:overflow-hidden">
       
-      <!-- Left Column: Symmetrical Diagram Canvas (Col 8) -->
-      <div class="col-span-8 flex flex-col bg-[#0b101d] rounded-3xl border border-slate-800 p-4 relative overflow-hidden shadow-2xl" style="background-image: linear-gradient(to right, #131c33 1px, transparent 1px), linear-gradient(to bottom, #131c33 1px, transparent 1px); background-size: 24px 24px;">
+      <!-- Left Column: Symmetrical Diagram Canvas (Col 8 on desktop) -->
+      <div class="lg:col-span-8 h-[400px] lg:h-auto flex flex-col bg-[#0b101d] rounded-3xl border border-slate-800 p-3 sm:p-4 relative overflow-hidden shadow-2xl" style="background-image: linear-gradient(to right, #131c33 1px, transparent 1px), linear-gradient(to bottom, #131c33 1px, transparent 1px); background-size: 24px 24px;">
         
         <!-- Stepper Controller Strip -->
-        <div class="flex items-center justify-between bg-slate-900/90 backdrop-blur border border-slate-800 rounded-2xl p-3 mb-2 z-30 shadow-lg">
-          <div class="flex items-center gap-3">
-            <span id="fs-step-badge" class="px-3 py-1 rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/30 text-xs font-mono font-bold">
+        <div class="flex items-center justify-between bg-slate-900/90 backdrop-blur border border-slate-800 rounded-2xl p-2.5 sm:p-3 mb-2 z-30 shadow-lg">
+          <div class="flex items-center gap-2 sm:gap-3">
+            <span id="fs-step-badge" class="px-2.5 sm:px-3 py-1 rounded-xl bg-orange-500/20 text-orange-400 border border-orange-500/30 text-xs font-mono font-bold">
               STEP: 0 / 20
             </span>
-            <div id="fs-step-title" class="text-xs font-bold text-white max-w-md truncate">
+            <div id="fs-step-title" class="text-xs font-bold text-white max-w-[200px] sm:max-w-md truncate">
               Ready to trace step-by-step flow.
             </div>
           </div>
 
-          <!-- Controls: Prev, Next, Auto Simulate (≥3s gap) -->
-          <div class="flex items-center gap-2">
-            <button onclick="stepSimulation(-1)" id="btn-prev-step" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1 transition disabled:opacity-30 disabled:pointer-events-none">
+          <!-- Controls: Prev, Next, Auto Simulate -->
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <button onclick="stepSimulation(-1)" id="btn-prev-step" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1 transition disabled:opacity-30 disabled:pointer-events-none">
               <i data-lucide="chevron-left" class="w-4 h-4"></i>
-              <span>Prev</span>
+              <span class="hidden sm:inline">Prev</span>
             </button>
-            <button onclick="stepSimulation(1)" id="btn-next-step" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1 transition disabled:opacity-30 disabled:pointer-events-none">
-              <span>Next</span>
+            <button onclick="stepSimulation(1)" id="btn-next-step" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1 transition disabled:opacity-30 disabled:pointer-events-none">
+              <span class="hidden sm:inline">Next</span>
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
-            <button onclick="toggleAutoSimulation()" id="btn-auto-sim" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-emerald-600 hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-orange-500/20 transition">
+            <button onclick="toggleAutoSimulation()" id="btn-auto-sim" class="px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-emerald-600 hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-orange-500/20 transition">
               <i id="btn-auto-icon" data-lucide="play" class="w-3.5 h-3.5 fill-white"></i>
-              <span id="btn-auto-text">Simulate (3s / step)</span>
+              <span id="btn-auto-text">Simulate (3s)</span>
             </button>
             <button onclick="resetSimulation()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition" title="Reset Run">
               <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
@@ -392,6 +394,7 @@
               <text x="550" y="516" fill="#e9d5ff" font-size="13" font-family="sans-serif" font-weight="900" text-anchor="middle">Payee's Bank</text>
             </g>
 
+            <!-- PERIPHERAL HELPER BLOCKS -->
             <!-- Common Library (Top Left: 90, 110) -->
             <g id="block-cl" class="transition-all duration-300 cursor-pointer">
               <rect x="20" y="80" width="140" height="60" rx="14" fill="#0c2264" stroke="#6366f1" stroke-width="2" />
@@ -426,8 +429,8 @@
         </div>
       </div>
 
-      <!-- Right Column: Current Step & API / CL Method Terminal (Col 4) -->
-      <div class="col-span-4 flex flex-col bg-[#0b101d] rounded-3xl border border-slate-800 p-4 overflow-hidden shadow-2xl">
+      <!-- Right Column: Current Step & API / CL Method Terminal (Col 4 on desktop) -->
+      <div class="lg:col-span-4 flex flex-col bg-[#0b101d] rounded-3xl border border-slate-800 p-4 overflow-hidden shadow-2xl">
         
         <!-- Current Step Section -->
         <div class="mb-4">
@@ -479,7 +482,7 @@
     document.addEventListener('touchend', function (event) {
       const now = Date.now();
       if (now - lastTouchTime <= 300) {
-        if (event.target.closest('button, input, select, a')) {
+        if (event.target.closest('button, a')) {
           event.preventDefault();
           event.target.click();
         }
@@ -523,7 +526,7 @@
 
     let appState;
     try {
-      const stored = localStorage.getItem('FASTPAY_PLUS_V7_STATE');
+      const stored = localStorage.getItem('FASTPAY_PLUS_V8_STATE');
       appState = stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_STATE));
     } catch (e) {
       appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -531,7 +534,7 @@
 
     function saveState() {
       try {
-        localStorage.setItem('FASTPAY_PLUS_V7_STATE', JSON.stringify(appState));
+        localStorage.setItem('FASTPAY_PLUS_V8_STATE', JSON.stringify(appState));
       } catch (e) {
         console.warn('LocalStorage error', e);
       }
@@ -539,7 +542,7 @@
 
     function resetDemoSession() {
       try {
-        localStorage.removeItem('FASTPAY_PLUS_V7_STATE');
+        localStorage.removeItem('FASTPAY_PLUS_V8_STATE');
       } catch (e) {}
       appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
       saveState();
@@ -1101,14 +1104,14 @@
       }
     }
 
-    // Status Bar Live Clock
+    // Status Bar Live Clock Update
     setInterval(() => {
       const now = new Date();
       const el = document.getElementById('live-phone-time');
       if (el) el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }, 1000);
 
-    // Initial Launch
+    // Initial DOM Launch
     document.addEventListener('DOMContentLoaded', () => {
       renderCurrentView();
       if (window.lucide) lucide.createIcons();
