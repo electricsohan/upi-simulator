@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Disallow mobile browser auto-zoom on double tap -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>FastPay+ Instant Payment System & Backend Architecture</title>
   <!-- Tailwind CSS CDN -->
@@ -75,7 +76,7 @@
 <body class="bg-slate-900 text-slate-800 min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans antialiased select-none overflow-hidden">
 
   <!-- ========================================================================= -->
-  <!-- 1. MOBILE PHONE SCREEN CONTAINER (GEOMETRICALLY ALIGNED)                  -->
+  <!-- 1. MOBILE PHONE SCREEN CONTAINER                                          -->
   <!-- ========================================================================= -->
   <div class="w-[min(390px,94vw)] h-[min(800px,94vh)] bg-white rounded-[44px] p-2.5 sm:p-3 border-4 sm:border-8 border-slate-800 shadow-2xl shadow-slate-950/80 relative flex flex-col overflow-hidden text-slate-800 z-10 shrink-0">
     
@@ -150,7 +151,7 @@
 
       <!-- Dynamic Views Container -->
       <div id="mobile-view-container" class="flex-1 overflow-y-auto px-4 pb-16 pt-2 bg-gradient-to-b from-orange-50/30 via-white to-emerald-50/30">
-        <!-- Injected via JavaScript -->
+        <!-- Rendered dynamically -->
       </div>
 
       <!-- Bottom Tab Navigation -->
@@ -177,8 +178,6 @@
       <!-- NPCI CL (COMMON LIBRARY) 5-STEP PIN SET/RESET & AUTH OVERLAY              -->
       <!-- ========================================================================= -->
       <div id="mpin-modal" class="hidden absolute inset-0 bg-[#0c2264] z-50 flex flex-col justify-between select-none font-sans">
-        
-        <!-- CL Top Header -->
         <div>
           <div class="bg-white px-4 py-3 flex items-center justify-between border-b border-slate-200">
             <span id="cl-bank-name-header" class="text-xs font-bold text-slate-900 tracking-tight">Bank A</span>
@@ -282,9 +281,7 @@
   <!-- ========================================================================= -->
   <div id="fullscreen-backend-modal" class="hidden fixed inset-0 z-50 bg-[#070b14] text-slate-100 flex flex-col p-3 sm:p-5 overflow-hidden select-none font-sans">
     
-    <!-- ======================================================================= -->
-    <!-- MOBILE PORTRAIT ORIENTATION PROMPT (BLOCKER)                            -->
-    <!-- ======================================================================= -->
+    <!-- Mobile Portrait Orientation Prompt (Blocker) -->
     <div id="rotate-device-prompt" class="backend-portrait-blocker hidden absolute inset-0 z-[100] bg-[#070b14]/98 backdrop-blur-lg flex-col items-center justify-center p-6 text-center">
       <div class="w-20 h-20 rounded-3xl bg-orange-500/10 border-2 border-orange-500/40 text-orange-400 flex items-center justify-center mb-5 shadow-xl shadow-orange-500/20">
         <i data-lucide="smartphone" class="w-10 h-10 animate-rotate-phone"></i>
@@ -299,9 +296,7 @@
       </button>
     </div>
 
-    <!-- ======================================================================= -->
-    <!-- ACTUAL LANDSCAPE WORKBENCH WORKSPACE                                    -->
-    <!-- ======================================================================= -->
+    <!-- Landscape Workbench Workspace -->
     <div class="backend-landscape-workspace flex-1 flex flex-col min-h-0">
       
       <!-- Top Command Header -->
@@ -372,7 +367,7 @@
                 <span id="btn-auto-text">Simulate (3s)</span>
               </button>
               <button onclick="resetSimulation()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition" title="Reset Run">
-                <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
@@ -475,7 +470,7 @@
         <div class="col-span-4 flex flex-col bg-[#0b101d] rounded-2xl border border-slate-800 p-3 overflow-hidden shadow-2xl">
           
           <!-- Current Step Box -->
-          <div class="mb-2.5">
+          <div class="mb-2">
             <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
               <span class="flex items-center gap-1.5 text-orange-400">
                 <i data-lucide="compass" class="w-3.5 h-3.5"></i>
@@ -483,13 +478,13 @@
               </span>
               <span id="fs-step-indicator" class="text-orange-400 font-mono font-bold">STEP 0 / 20</span>
             </div>
-            <div id="fs-step-desc" class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 leading-relaxed min-h-[80px] shadow-inner">
+            <div id="fs-step-desc" class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 leading-relaxed min-h-[70px] shadow-inner">
               Click <b>Next</b> or <b>Simulate (3s / step)</b> to step through the flow.
             </div>
           </div>
 
-          <!-- API / CL Method Involved Box -->
-          <div class="flex-1 flex flex-col min-h-0">
+          <!-- API / CL Method Involved & XML Payload Container -->
+          <div class="flex-1 flex flex-col min-h-0 overflow-hidden">
             <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">
               <span class="flex items-center gap-1.5 text-emerald-400">
                 <i data-lucide="code-2" class="w-3.5 h-3.5"></i>
@@ -498,8 +493,8 @@
               <span id="fs-api-badge" class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono text-[9px]">AWAITING_STEP</span>
             </div>
 
-            <div id="fs-api-container" class="flex-1 p-2.5 bg-slate-950 border border-slate-800 rounded-xl overflow-y-auto space-y-2 font-mono text-xs shadow-inner">
-              <div class="text-slate-500 italic text-center py-4">Select a step to inspect the exact API or Common Library method invoked.</div>
+            <div id="fs-api-container" class="flex-1 p-2.5 bg-slate-950 border border-slate-800 rounded-xl overflow-y-auto space-y-2 text-xs shadow-inner">
+              <div class="text-slate-500 italic text-center py-4 font-mono">Select a step to inspect the exact API, XML payload, and execution narrative.</div>
             </div>
           </div>
 
@@ -570,7 +565,7 @@
 
     let appState;
     try {
-      const stored = localStorage.getItem('FASTPAY_PLUS_V10_STATE');
+      const stored = localStorage.getItem('FASTPAY_PLUS_V11_STATE');
       appState = stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_STATE));
       if (!appState.accountInfo) appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
     } catch (e) {
@@ -579,7 +574,7 @@
 
     function saveState() {
       try {
-        localStorage.setItem('FASTPAY_PLUS_V10_STATE', JSON.stringify(appState));
+        localStorage.setItem('FASTPAY_PLUS_V11_STATE', JSON.stringify(appState));
       } catch (e) {
         console.warn('LocalStorage error', e);
       }
@@ -587,7 +582,7 @@
 
     function resetDemoSession() {
       try {
-        localStorage.removeItem('FASTPAY_PLUS_V10_STATE');
+        localStorage.removeItem('FASTPAY_PLUS_V11_STATE');
       } catch (e) {}
       appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
       saveState();
@@ -625,7 +620,7 @@
     }
 
     // =========================================================================
-    // FLOW 1: PAY FLOW STEPS (10 BLOCKS)
+    // FLOW 1: PAY FLOW STEPS (WITH XML PAYLOADS & "LEARN WHAT HAPPENS")
     // =========================================================================
     const PAY_FLOW_STEPS = [
       {
@@ -634,7 +629,12 @@
         desc: "Payer enters Payee VPA (or scans dynamic QR). Payer is shown the verified Payee Name and is prompted to select their linked UPI bank account for payment.",
         activeBlocks: ['block-payer-app'],
         activeWires: [],
-        apiInfo: { methodName: "UI Client Event (Pre-Auth Intent)", category: "Mobile Client", details: "Payer inputs merchant/payee identifier. App prompts for source account verification before initiating PIN capture." }
+        apiInfo: {
+          methodName: "UI Client Event (Pre-Auth Intent)",
+          category: "Mobile Client",
+          details: "Payer selects counterparty and verifies transaction invoice before invoking Common Library isolation.",
+          xmlPayload: null
+        }
       },
       {
         stepNum: 2,
@@ -642,7 +642,12 @@
         desc: "<b>Arrow #1 [Req]:</b> Payer is redirected to Common Library page to enter UPI PIN. Payer APP invokes the isolated Common Library container.",
         activeBlocks: ['block-payer-app', 'block-cl'],
         activeWires: ['wire-pay-1'],
-        apiInfo: { methodName: "getCredential()", category: "Common Library (CL)", details: "Payer APP calls Common Library method getCredential() with bank challenge token to safely capture the UPI PIN." }
+        apiInfo: {
+          methodName: "getCredential()",
+          category: "Common Library (CL)",
+          details: "Payer APP calls Common Library method getCredential() with bank challenge token to safely capture the UPI PIN.",
+          xmlPayload: `<cl:getCredentialRequest xmlns:cl="http://npci.org/upi/schema/cl">\n  <Head ver="2.0" ts="2026-09-29T10:42:01Z"/>\n  <Txn id="TXN-98432101" note="Dinner" refId="REF-89410"/>\n  <CredsAllowed type="PIN" subType="MPIN" dType="NUM" dLength="6"/>\n  <Salt>984218903124</Salt>\n  <Payee name="Merchant ABC" addr="merchantABC@bankB"/>\n</cl:getCredentialRequest>`
+        }
       },
       {
         stepNum: 3,
@@ -650,7 +655,12 @@
         desc: "<b>Arrow #2 [Resp]:</b> Common Library captures the 6-digit PIN in hardware-isolated sandbox, encrypts it with the Bank's Public Key, and returns the encrypted PIN block to Payer APP.",
         activeBlocks: ['block-cl', 'block-payer-app'],
         activeWires: ['wire-pay-2'],
-        apiInfo: { methodName: "getCredential() [Response]", category: "Common Library (CL)", details: "Returns Base64-encoded encrypted PIN block (RSA/PKCS1). Cleartext PIN is strictly wiped from memory." }
+        apiInfo: {
+          methodName: "getCredential() [Response]",
+          category: "Common Library (CL)",
+          details: "Returns Base64-encoded encrypted PIN block (RSA/PKCS1). Cleartext PIN is strictly wiped from memory.",
+          xmlPayload: `<cl:getCredentialResponse xmlns:cl="http://npci.org/upi/schema/cl">\n  <Head ver="2.0" ts="2026-09-29T10:42:03Z"/>\n  <CredBlock type="PIN" subType="MPIN">\n    <Data>RSA_PKCS1_ENC_7F9940A3912DF801ACD98204</Data>\n    <Ki>20260901-BKNA-KEY-01</Ki>\n  </CredBlock>\n  <Status>SUCCESS</Status>\n</cl:getCredentialResponse>`
+        }
       },
       {
         stepNum: 4,
@@ -658,7 +668,12 @@
         desc: "<b>Arrow #3 [Req]:</b> Payer APP sends a payment authorization request containing Payer VPA, Payee VPA, Payer Account, and Encrypted PIN to Payer PSP.",
         activeBlocks: ['block-payer-app', 'block-payer-psp'],
         activeWires: ['wire-pay-3'],
-        apiInfo: { methodName: "ReqPay Type=PAY", category: "UPI Protocol", details: "Payer APP initiates payment payload with Payer VPA, Payee VPA, and encrypted credential token." }
+        apiInfo: {
+          methodName: "ReqPay Type=PAY",
+          category: "UPI Protocol",
+          details: "Payer APP initiates payment payload with Payer VPA, Payee VPA, and encrypted credential token.",
+          xmlPayload: `<upi:ReqPay xmlns:upi="http://npci.org/upi/schema/">\n  <Head ver="2.0" ts="2026-09-29T10:42:04Z" msgId="MSG-PAY-001"/>\n  <Txn id="TXN-98432101" note="Dinner" type="PAY">\n    <RiskScores provider="PSP" value="0.01"/>\n  </Txn>\n  <Payer addr="userABC@bankA" name="John Doe">\n    <Amount value="750.00" curr="INR"/>\n    <CredBlock subType="MPIN">RSA_PKCS1_ENC_7F9940A3912D...</CredBlock>\n  </Payer>\n  <Payee addr="merchantABC@bankB"/>\n</upi:ReqPay>`
+        }
       },
       {
         stepNum: 5,
@@ -666,7 +681,12 @@
         desc: "<b>Arrow #4 [Req]:</b> Payer PSP redirects the payment request to Central Switch with Payer VPA, Payee VPA, Payer Account, and Payer Bank Identifier Code (BIC).",
         activeBlocks: ['block-payer-psp', 'block-central-switch'],
         activeWires: ['wire-pay-4'],
-        apiInfo: { methodName: "ReqPay Type=PAY", category: "UPI Protocol", details: "Payer PSP routes ReqPay Type=PAY to Central Switch carrying Payer VPA, Payee VPA, Account No, and Payer BIC (BKNA000101)." }
+        apiInfo: {
+          methodName: "ReqPay Type=PAY",
+          category: "UPI Protocol",
+          details: "Payer PSP routes ReqPay Type=PAY to Central Switch carrying Payer VPA, Payee VPA, Account No, and Payer BIC (BKNA000101).",
+          xmlPayload: `<upi:ReqPay xmlns:upi="http://npci.org/upi/schema/">\n  <Head ver="2.0" ts="2026-09-29T10:42:04Z" orgId="FASTPAY_PSP"/>\n  <Txn id="TXN-98432101" rrn="423189201948" type="PAY"/>\n  <Payer addr="userABC@bankA" accNo="4821" ifsc="BKNA000101">\n    <Amount value="750.00" curr="INR"/>\n    <CredBlock>RSA_PKCS1_ENC_7F9940A3912D...</CredBlock>\n  </Payer>\n  <Payee addr="merchantABC@bankB"/>\n</upi:ReqPay>`
+        }
       },
       {
         stepNum: 6,
@@ -674,7 +694,12 @@
         desc: "<b>Arrow #5 [Req]:</b> Central Switch redirects the validation request to Payee PSP based on the Payee VPA handle domain.",
         activeBlocks: ['block-central-switch', 'block-payee-psp'],
         activeWires: ['wire-pay-5'],
-        apiInfo: { methodName: "ReqAuthDetails Type=PAY", category: "UPI Protocol", details: "Central Switch queries Payee PSP to validate beneficiary handle and fetch resolved banking parameters." }
+        apiInfo: {
+          methodName: "ReqAuthDetails Type=PAY",
+          category: "UPI Protocol",
+          details: "Central Switch queries Payee PSP to validate beneficiary handle and fetch resolved banking parameters.",
+          xmlPayload: `<upi:ReqAuthDetails xmlns:upi="http://npci.org/upi/schema/">\n  <Head ver="2.0" ts="2026-09-29T10:42:05Z" msgId="SW-VAL-90184"/>\n  <Txn id="TXN-98432101" rrn="423189201948" type="PAY"/>\n  <Payee addr="merchantABC@bankB"/>\n</upi:ReqAuthDetails>`
+        }
       },
       {
         stepNum: 7,
@@ -682,7 +707,12 @@
         desc: "<b>Arrow #6 [Resp]:</b> Payee PSP validates the Payee VPA and resolves the Beneficiary Account number and Bank Identifier Code (BIC).",
         activeBlocks: ['block-payee-psp', 'block-central-switch'],
         activeWires: ['wire-pay-6'],
-        apiInfo: { methodName: "RespAuthDetails Type=PAY", category: "UPI Protocol", details: "Payee PSP responds with validation status, Payee Account Number, and Payee BIC (BKNB000202)." }
+        apiInfo: {
+          methodName: "RespAuthDetails Type=PAY",
+          category: "UPI Protocol",
+          details: "Payee PSP responds with validation status, Payee Account Number, and Payee BIC (BKNB000202).",
+          xmlPayload: `<upi:RespAuthDetails xmlns:upi="http://npci.org/upi/schema/">\n  <Head ver="2.0" ts="2026-09-29T10:42:05Z" respMsgId="SW-VAL-90184"/>\n  <Txn id="TXN-98432101" status="SUCCESS"/>\n  <Payee addr="merchantABC@bankB" name="Merchant ABC Enterprise">\n    <Account accNo="9012" ifsc="BKNB000202" type="CURRENT"/>\n  </Payee>\n</upi:RespAuthDetails>`
+        }
       },
       {
         stepNum: 8,
@@ -690,7 +720,12 @@
         desc: "<b>Arrow #7 [Req]:</b> Central Switch routes the Debit request to Payer's Bank based on Payer's BIC.",
         activeBlocks: ['block-central-switch', 'block-payer-bank'],
         activeWires: ['wire-pay-7'],
-        apiInfo: { methodName: "ReqPay Type=DEBIT", category: "UPI Protocol", details: "Central Switch instructs Remitter Bank (BIC: BKNA000101) to debit the customer account with encrypted PIN attached." }
+        apiInfo: {
+          methodName: "ReqPay Type=DEBIT",
+          category: "UPI Protocol",
+          details: "Central Switch instructs Remitter Bank (BIC: BKNA000101) to debit the customer account with encrypted PIN attached.",
+          xmlPayload: `<pacs:pacs.008.001.08 xmlns:pacs="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">\n  <GrpHdr><MsgId>SW-DEBIT-7741</MsgId><CreDtTm>2026-09-29T10:42:06Z</CreDtTm></GrpHdr>\n  <CdtTrfTxInf>\n    <PmtId><EndToEndId>TXN-98432101</EndToEndId><TxId>423189201948</TxId></PmtId>\n    <IntrBkSttlmAmt Ccy="INR">750.00</IntrBkSttlmAmt>\n    <DbtrAcct><Id><Othr><Id>4821</Id></Othr></Id></DbtrAcct>\n    <DbtrAgt><FinInstnId><BICFI>BKNA000101</BICFI></FinInstnId></DbtrAgt>\n    <SplmtryData><Envlp><CredBlock>RSA_PKCS1_ENC_7F9940A3912D...</CredBlock></Envlp></SplmtryData>\n  </CdtTrfTxInf>\n</pacs:pacs.008.001.08>`
+        }
       },
       {
         stepNum: 9,
@@ -698,7 +733,12 @@
         desc: "<b>Arrow #8 [Req]:</b> Payer's Bank forwards the encrypted PIN block to its Hardware Security Module (HSM) for hardware-isolated cryptographic verification.",
         activeBlocks: ['block-payer-bank', 'block-payer-hsm'],
         activeWires: ['wire-pay-8'],
-        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank HSM", details: "Bank Switch dispatches authentication command to HSM hardware vault to verify customer MPIN." }
+        apiInfo: {
+          methodName: "Bank's internal APIs (out of UPI purview)",
+          category: "Internal Bank HSM",
+          details: "Bank Switch dispatches authentication command to HSM hardware vault to verify customer MPIN.",
+          xmlPayload: `<hsm:verifyPinCommand xmlns:hsm="urn:banka:security:hsm">\n  <SlotId>HSM_SLOT_01</SlotId>\n  <AccountToken>ACCT-HASH-4821</AccountToken>\n  <EncryptedPinBlock format="PKCS1">RSA_PKCS1_ENC_7F9940A3912D...</EncryptedPinBlock>\n  <VerificationRule>UPI_MPIN_V2</VerificationRule>\n</hsm:verifyPinCommand>`
+        }
       },
       {
         stepNum: 10,
@@ -706,7 +746,12 @@
         desc: "<b>Arrow #9 [Resp]:</b> Payer Bank's HSM validates the PIN against stored secure keys and returns authentication success to Payer's Bank.",
         activeBlocks: ['block-payer-hsm', 'block-payer-bank'],
         activeWires: ['wire-pay-9'],
-        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank HSM", details: "HSM confirms PIN integrity and returns verified authorization signature to Bank Switch." }
+        apiInfo: {
+          methodName: "Bank's internal APIs (out of UPI purview)",
+          category: "Internal Bank HSM",
+          details: "HSM confirms PIN integrity and returns verified authorization signature to Bank Switch.",
+          xmlPayload: `<hsm:verifyPinResponse xmlns:hsm="urn:banka:security:hsm">\n  <ResultCode>AUTH_SUCCESS_00</ResultCode>\n  <AuthSignature>ECDSA_SHA256_VERIFIED_SIGNATURE_88491</AuthSignature>\n  <LatencyMs>11</LatencyMs>\n</hsm:verifyPinResponse>`
+        }
       },
       {
         stepNum: 11,
@@ -714,7 +759,12 @@
         desc: "<b>Arrow #10 [Req]:</b> Upon successful PIN validation, Payer's Bank calls its Core Banking System (CBS) to validate account balance and debit Payer's account.",
         activeBlocks: ['block-payer-bank', 'block-payer-cbs'],
         activeWires: ['wire-pay-10'],
-        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "Internal Core Banking balance check and transaction ledger debit execution request." }
+        apiInfo: {
+          methodName: "Bank's internal APIs (out of UPI purview)",
+          category: "Internal Bank CBS",
+          details: "Internal Core Banking balance check and transaction ledger debit execution request.",
+          xmlPayload: `<cbs:debitAccountRequest xmlns:cbs="urn:banka:corebanking:cbs">\n  <TxnRef>CBS-DB-9841</TxnRef>\n  <AccountNo>••••••••4821</AccountNo>\n  <DebitAmount currency="INR">750.00</DebitAmount>\n  <Narrative>UPI/423189201948/Dinner</Narrative>\n</cbs:debitAccountRequest>`
+        }
       },
       {
         stepNum: 12,
@@ -722,7 +772,12 @@
         desc: "<b>Arrow #11 [Resp]:</b> Payer Bank's CBS validates funds, completes ledger debit, updates available balance, and confirms success to Payer's Bank.",
         activeBlocks: ['block-payer-cbs', 'block-payer-bank'],
         activeWires: ['wire-pay-11'],
-        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "CBS posts debit entry, logs transaction reference, and returns success confirmation." }
+        apiInfo: {
+          methodName: "Bank's internal APIs (out of UPI purview)",
+          category: "Internal Bank CBS",
+          details: "CBS posts debit entry, logs transaction reference, and returns success confirmation.",
+          xmlPayload: `<cbs:debitAccountResponse xmlns:cbs="urn:banka:corebanking:cbs">\n  <TxnRef>CBS-DB-9841</TxnRef>\n  <StatusCode>POSTED_SETTLED</StatusCode>\n  <LedgerBalance currency="INR">144250.00</LedgerBalance>\n  <JournalEntryId>JRN-9018481</JournalEntryId>\n</cbs:debitAccountResponse>`
+        }
       },
       {
         stepNum: 13,
@@ -730,7 +785,12 @@
         desc: "<b>Arrow #12 [Resp]:</b> Payer's Bank responds to Central Switch confirming successful account debit.",
         activeBlocks: ['block-payer-bank', 'block-central-switch'],
         activeWires: ['wire-pay-12'],
-        apiInfo: { methodName: "RespPay Type=DEBIT", category: "UPI Protocol", details: "Payer's Bank transmits successful debit confirmation and Remitter RRN back to Central Switch." }
+        apiInfo: {
+          methodName: "RespPay Type=DEBIT",
+          category: "UPI Protocol",
+          details: "Payer's Bank transmits successful debit confirmation and Remitter RRN back to Central Switch.",
+          xmlPayload: `<pacs:pacs.002.001.10 xmlns:pacs="urn:iso:std:iso:20022:tech:xsd:pacs.002.001.10">\n  <GrpHdr><MsgId>BKNA-RESP-7741</MsgId></GrpHdr>\n  <TxInfAndSts>\n    <OrgnlEndToEndId>TXN-98432101</OrgnlEndToEndId>\n    <OrgnlTxId>423189201948</OrgnlTxId>\n    <TxSts>ACTC</TxSts>\n    <ClrSysRef>CLR-BKNA-DEBIT-00</ClrSysRef>\n  </TxInfAndSts>\n</pacs:pacs.002.001.10>`
+        }
       },
       {
         stepNum: 14,
@@ -738,7 +798,12 @@
         desc: "<b>Arrow #13 [Req]:</b> Upon getting response from Payer's Bank, Central Switch forwards Credit request to Payee's Bank based on Payee's BIC.",
         activeBlocks: ['block-central-switch', 'block-payee-bank'],
         activeWires: ['wire-pay-13'],
-        apiInfo: { methodName: "ReqPay Type=CREDIT", category: "UPI Protocol", details: "Central Switch directs credit instruction to Beneficiary Bank (BIC: BKNB000202) for real-time deposit." }
+        apiInfo: {
+          methodName: "ReqPay Type=CREDIT",
+          category: "UPI Protocol",
+          details: "Central Switch directs credit instruction to Beneficiary Bank (BIC: BKNB000202) for real-time deposit.",
+          xmlPayload: `<pacs:pacs.008.001.08 xmlns:pacs="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">\n  <GrpHdr><MsgId>SW-CREDIT-9912</MsgId></GrpHdr>\n  <CdtTrfTxInf>\n    <PmtId><EndToEndId>TXN-98432101</EndToEndId><TxId>423189201948</TxId></PmtId>\n    <IntrBkSttlmAmt Ccy="INR">750.00</IntrBkSttlmAmt>\n    <CdtrAcct><Id><Othr><Id>9012</Id></Othr></Id></CdtrAcct>\n    <CdtrAgt><FinInstnId><BICFI>BKNB000202</BICFI></FinInstnId></CdtrAgt>\n  </CdtTrfTxInf>\n</pacs:pacs.008.001.08>`
+        }
       },
       {
         stepNum: 15,
@@ -746,7 +811,12 @@
         desc: "<b>Arrow #14 [Req]:</b> Payee's Bank invokes its Core Banking System (CBS) to credit the beneficiary customer's account.",
         activeBlocks: ['block-payee-bank', 'block-payee-cbs'],
         activeWires: ['wire-pay-14'],
-        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "Beneficiary bank internal API call directing CBS to credit funds to beneficiary account." }
+        apiInfo: {
+          methodName: "Bank's internal APIs (out of UPI purview)",
+          category: "Internal Bank CBS",
+          details: "Beneficiary bank internal API call directing CBS to credit funds to beneficiary account.",
+          xmlPayload: `<cbs:creditAccountRequest xmlns:cbs="urn:bankb:corebanking:cbs">\n  <TxnRef>CBS-CR-3301</TxnRef>\n  <AccountNo>••••••••9012</AccountNo>\n  <CreditAmount currency="INR">750.00</CreditAmount>\n  <RemitterInfo>John Doe / userABC@bankA</RemitterInfo>\n</cbs:creditAccountRequest>`
+        }
       },
       {
         stepNum: 16,
@@ -754,7 +824,12 @@
         desc: "<b>Arrow #15 [Resp]:</b> Payee Bank's CBS posts the credit entry and responds back with confirmation to Payee's Bank.",
         activeBlocks: ['block-payee-cbs', 'block-payee-bank'],
         activeWires: ['wire-pay-15'],
-        apiInfo: { methodName: "Bank's internal APIs (out of UPI purview)", category: "Internal Bank CBS", details: "CBS confirms credit posted with final ledger balance and transaction record." }
+        apiInfo: {
+          methodName: "Bank's internal APIs (out of UPI purview)",
+          category: "Internal Bank CBS",
+          details: "CBS confirms credit posted with final ledger balance and transaction record.",
+          xmlPayload: `<cbs:creditAccountResponse xmlns:cbs="urn:bankb:corebanking:cbs">\n  <TxnRef>CBS-CR-3301</TxnRef>\n  <Status>CREDITED_FINAL</Status>\n  <PostingTimestamp>2026-09-29T10:42:07Z</PostingTimestamp>\n</cbs:creditAccountResponse>`
+        }
       },
       {
         stepNum: 17,
@@ -762,7 +837,12 @@
         desc: "<b>Arrow #16 [Resp]:</b> Payee's Bank responds back to Central Switch confirming successful credit posting.",
         activeBlocks: ['block-payee-bank', 'block-central-switch'],
         activeWires: ['wire-pay-16'],
-        apiInfo: { methodName: "RespPay Type=CREDIT", category: "UPI Protocol", details: "Payee's Bank dispatches RespPay Type=CREDIT confirming real-time irrevocable settlement." }
+        apiInfo: {
+          methodName: "RespPay Type=CREDIT",
+          category: "UPI Protocol",
+          details: "Payee's Bank dispatches RespPay Type=CREDIT confirming real-time irrevocable settlement.",
+          xmlPayload: `<pacs:pacs.002.001.10 xmlns:pacs="urn:iso:std:iso:20022:tech:xsd:pacs.002.001.10">\n  <GrpHdr><MsgId>BKNB-RESP-9912</MsgId></GrpHdr>\n  <TxInfAndSts>\n    <OrgnlEndToEndId>TXN-98432101</OrgnlEndToEndId>\n    <TxSts>ACTC</TxSts>\n    <ClrSysRef>CLR-BKNB-CREDIT-00</ClrSysRef>\n  </TxInfAndSts>\n</pacs:pacs.002.001.10>`
+        }
       },
       {
         stepNum: 18,
@@ -770,7 +850,12 @@
         desc: "<b>Arrow #17 [Resp]:</b> Central Switch sends the successful payment clearing confirmation to Payer PSP.",
         activeBlocks: ['block-central-switch', 'block-payer-psp'],
         activeWires: ['wire-pay-17'],
-        apiInfo: { methodName: "RespPay Type=PAY", category: "UPI Protocol", details: "Central Switch returns successful transaction status and Switch RRN to Payer PSP." }
+        apiInfo: {
+          methodName: "RespPay Type=PAY",
+          category: "UPI Protocol",
+          details: "Central Switch returns successful transaction status and Switch RRN to Payer PSP.",
+          xmlPayload: `<upi:RespPay xmlns:upi="http://npci.org/upi/schema/">\n  <Head ver="2.0" ts="2026-09-29T10:42:08Z"/>\n  <Txn id="TXN-98432101" rrn="423189201948" status="SUCCESS"/>\n  <Result>SUCCESS</Result>\n  <SettlementLeg>A2A_INSTANT</SettlementLeg>\n</upi:RespPay>`
+        }
       },
       {
         stepNum: 19,
@@ -778,7 +863,12 @@
         desc: "<b>Arrow #18 [Resp]:</b> Payer PSP forwards the success status to Payer APP to render the payment receipt.",
         activeBlocks: ['block-payer-psp', 'block-payer-app'],
         activeWires: ['wire-pay-18'],
-        apiInfo: { methodName: "RespPay Type=PAY", category: "UPI Protocol", details: "Payer APP receives success acknowledgment and displays the transaction receipt on the user screen." }
+        apiInfo: {
+          methodName: "RespPay Type=PAY",
+          category: "UPI Protocol",
+          details: "Payer APP receives success acknowledgment and displays the transaction receipt on the user screen.",
+          xmlPayload: `<upi:RespPayClient xmlns:upi="http://npci.org/upi/schema/">\n  <Txn id="TXN-98432101" status="SUCCESS" rrn="423189201948"/>\n  <Amount value="750.00" curr="INR"/>\n  <Beneficiary>Merchant ABC Enterprise</Beneficiary>\n</upi:RespPayClient>`
+        }
       },
       {
         stepNum: 20,
@@ -786,7 +876,12 @@
         desc: "<b>Arrow #19 [Req]:</b> Central Switch sends a transaction confirmation request to Payee PSP for final merchant/payee notification.",
         activeBlocks: ['block-central-switch', 'block-payee-psp'],
         activeWires: ['wire-pay-19'],
-        apiInfo: { methodName: "ReqTxnConfirmation", category: "UPI Protocol", details: "Central Switch dispatches confirmation callback notifying Payee PSP of settled funds." }
+        apiInfo: {
+          methodName: "ReqTxnConfirmation",
+          category: "UPI Protocol",
+          details: "Central Switch dispatches confirmation callback notifying Payee PSP of settled funds.",
+          xmlPayload: `<upi:ReqTxnConfirmation xmlns:upi="http://npci.org/upi/schema/">\n  <Head ver="2.0" ts="2026-09-29T10:42:08Z"/>\n  <Txn id="TXN-98432101" rrn="423189201948" type="PAY"/>\n  <Payee addr="merchantABC@bankB" amount="750.00"/>\n  <Status>SETTLED</Status>\n</upi:ReqTxnConfirmation>`
+        }
       }
     ];
 
@@ -1159,9 +1254,9 @@
         const btn = document.getElementById(`fs-tab-${t}`);
         if (btn) {
           if (t === tab) {
-            btn.className = 'px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-xl transition bg-orange-500 text-white shadow';
+            btn.className = 'px-3 py-1.5 text-xs font-bold rounded-lg transition bg-orange-500 text-white shadow';
           } else {
-            btn.className = 'px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-xl transition text-slate-400 hover:text-white';
+            btn.className = 'px-3 py-1.5 text-xs font-bold rounded-lg transition text-slate-400 hover:text-white';
           }
         }
       });
@@ -1211,7 +1306,7 @@
       if (!apiObj) {
         badge.innerText = "AWAITING_STEP";
         badge.className = "px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono text-[9px]";
-        container.innerHTML = `<div class="text-slate-500 italic text-center py-4">Select a step to inspect the exact API or Common Library method invoked.</div>`;
+        container.innerHTML = `<div class="text-slate-500 italic text-center py-4 font-mono">Select a step to inspect the exact API, XML payload, and execution narrative.</div>`;
         return;
       }
 
@@ -1222,16 +1317,35 @@
         badge.className = "px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] border border-emerald-500/30";
       }
 
+      let xmlSectionHtml = '';
+      if (apiObj.xmlPayload) {
+        xmlSectionHtml = `
+          <div class="mt-2 pt-2 border-t border-slate-800/80">
+            <div class="flex items-center justify-between text-[9px] text-emerald-400 font-bold uppercase tracking-wider mb-1 font-mono">
+              <span>XML Wire Message (ISO 20022 / UPI)</span>
+              <span class="text-[8px] px-1 bg-emerald-950/60 border border-emerald-800/80 rounded">LIVE</span>
+            </div>
+            <pre class="w-full max-h-36 overflow-auto p-2 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[9.5px] text-emerald-300/90 leading-tight whitespace-pre">${escapeHtml(apiObj.xmlPayload)}</pre>
+          </div>
+        `;
+      }
+
       container.innerHTML = `
-        <div class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1">
-          <div class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Method / API Invoked</div>
-          <div class="text-xs font-black text-emerald-400">${apiObj.methodName}</div>
+        <div class="p-2 bg-slate-900 border border-slate-800 rounded-xl space-y-0.5">
+          <div class="text-[9px] text-slate-400 uppercase font-bold tracking-wider font-mono">Method / API Invoked</div>
+          <div class="text-xs font-black text-emerald-400 font-mono">${escapeHtml(apiObj.methodName)}</div>
         </div>
-        <div class="p-2.5 bg-slate-900/60 border border-slate-800/80 rounded-xl space-y-0.5 text-[11px] leading-relaxed text-slate-300">
-          <div class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Protocol Context</div>
+        <div class="p-2 bg-slate-900/60 border border-slate-800/80 rounded-xl space-y-0.5 text-[11px] leading-relaxed text-slate-300">
+          <div class="text-[9px] text-orange-400 uppercase font-bold tracking-wider font-mono">Learn what happens</div>
           <div>${apiObj.details}</div>
         </div>
+        ${xmlSectionHtml}
       `;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
     function resetSimulation() {
@@ -1311,6 +1425,7 @@
       if (prevBtn) prevBtn.disabled = (index === 0);
       if (nextBtn) nextBtn.disabled = (index === activeSteps.length - 1);
 
+      // Reset wires
       const wires = document.querySelectorAll('#svg-wires-group path');
       wires.forEach(wire => {
         wire.setAttribute('stroke', '#334155');
@@ -1321,6 +1436,7 @@
       const labels = document.querySelectorAll('#svg-wires-group text');
       labels.forEach(lbl => lbl.setAttribute('fill', '#64748b'));
 
+      // Reset blocks
       const allBlockIds = ['block-cl', 'block-payer-app', 'block-payer-psp', 'block-central-switch', 'block-payee-psp', 'block-payer-bank', 'block-payer-hsm', 'block-payer-cbs', 'block-payee-bank', 'block-payee-cbs'];
       allBlockIds.forEach(id => {
         const b = document.getElementById(id);
@@ -1334,6 +1450,7 @@
         }
       });
 
+      // Activate only current step wires
       step.activeWires.forEach(wId => {
         const el = document.getElementById(wId);
         if (el) {
@@ -1345,6 +1462,7 @@
         if (lbl) lbl.setAttribute('fill', '#f97316');
       });
 
+      // Highlight only current step blocks
       step.activeBlocks.forEach(bId => {
         const el = document.getElementById(bId);
         if (el) {
@@ -2488,7 +2606,7 @@
       `;
     }
 
-    // Status Bar Live Clock Update
+    // Live Clock Update
     setInterval(() => {
       const now = new Date();
       const el = document.getElementById('live-phone-time');
